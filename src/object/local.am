@@ -1,0 +1,21 @@
+## object module.
+
+src_libtc_la_SOURCES +=                                                        \
+  %D%/libobject.hh                                                             \
+  %D%/libobject.cc                                                             \
+  %D%/libobject.hxx                                                            \
+  %D%/fwd.hh
+
+
+
+
+
+# Tests.
+check_PROGRAMS += %D%/test-parse
+%C%_test_parse_LDADD = src/libtc.la
+
+
+
+
+
+TASKS += %D%/tasks.hh %D%/tasks.cc
