@@ -1,4 +1,4 @@
-#! /bin/perl -w
+#! /usr/bin/env -S perl -w
 
 # This script *tries* to fuse consecutive "switches" that have the
 # same body.
