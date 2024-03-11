@@ -26,7 +26,7 @@ build:
     - libtoolize
     - ./bootstrap
     - ./configure
-    - make -j 4
+    - make
 
 # run tests using the binary built before
 test:
@@ -35,5 +35,5 @@ test:
     - libtoolize
     - ./bootstrap
     - ./configure
-    - make -j 4
+    - make
     - make check
