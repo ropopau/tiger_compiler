@@ -15,6 +15,7 @@ default:
     image: registry.cri.epita.fr/cri/infrastructure/nixpie/nixos-pie
     before_script:
         - mkdir -p /tmp /var/tmp
+        - ln -s /bin/perl /usr/bin/perl
 
 build:
   stage: build
