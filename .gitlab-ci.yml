@@ -16,7 +16,7 @@ default:
     before_script:
         - mkdir -p /tmp /var/tmp
         - mkdir -p /usr/bin
-        - ln -s /bin /usr/bin
+        - ln -s /bin/env /usr/bin/env
 
 build:
   stage: build
