@@ -11,7 +11,7 @@
 namespace misc
 {
   template <typename T, class C> unique<T, C>::unique(const data_type& s)
-  // FIXME: Some code was deleted here (Initializations).
+    :obj_(&(*object_set_instance().insert(s).first))// FIXME: Some code was deleted here (Initializations).
   /** \brief Following the Flyweight design pattern, set the attribute to a
        unique reference of value s. You might want to check out std::set methods
        on cppreference.com. */
@@ -20,26 +20,29 @@ namespace misc
   template <typename T, class C>
   typename unique<T, C>::object_set_type& unique<T, C>::object_set_instance()
   {
-    // FIXME: Some code was deleted here (Classical Singleton pattern, a la Scott Meyers').
+    static object_set_type* set = nullptr;
+    if (set == nullptr)
+      set = new object_set_type();
+    return *set;// FIXME: Some code was deleted here (Classical Singleton pattern, a la Scott Meyers').
     /** \brief Create a persistent instance of a set which would hold each value. */
   }
 
   template <typename T, class C>
   typename unique<T, C>::object_size_type unique<T, C>::object_map_size()
   {
-    // FIXME: Some code was deleted here.
+    return object_set_instance().size();// FIXME: Some code was deleted here.
   }
 
   template <typename T, class C>
   inline const typename unique<T, C>::data_type& unique<T, C>::get() const
   {
-    // FIXME: Some code was deleted here.
+    return *obj_;// FIXME: Some code was deleted here.
   }
 
   template <typename T, class C>
   inline unique<T, C>::operator const data_type&() const
   {
-    // FIXME: Some code was deleted here (Check Typecasts overload).
+    return get();// FIXME: Some code was deleted here (Check Typecasts overload).
   }
 
   template <typename T, class C>
