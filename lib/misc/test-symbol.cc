@@ -16,7 +16,9 @@ int main()
   const symbol titi1("titi");
 
   // Checking symbol.
-  // FIXME: Some code was deleted here (Testing set size).
+  // FIXED: Some code was deleted here (Testing set size).
+  size_t expected_size = 2;
+  assertion(symbol::object_map_size() == expected_size);
   assertion(toto1.get() == "toto");
 
   assertion(toto1 == "toto");
