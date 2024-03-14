@@ -37,7 +37,9 @@
 #include <parse/parsetiger.hh>
 #include <parse/tiger-driver.hh>
 
-  // FIXME: Some code was deleted here (Define YY_USER_ACTION to update locations).
+  // FIXED: Some code was deleted here (Define YY_USER_ACTION to update locations)
+#define YY_USER_ACTION td.location_.columns(yyleng);
+
 
 #define TOKEN(Type)                             \
   parser::make_ ## Type(td.location_)
@@ -61,20 +63,76 @@
 
 /* Abbreviations.  */
 int             [0-9]+
-  /* FIXME: Some code was deleted here. */
+  /* FIXED: Some code was deleted here. */
+string          "\""([^\\]|\\.)*"\""
+id              [a-zA-Z][_a-zA-Z0-9]*
 
 %class{
-  // FIXME: Some code was deleted here (Local variables).
+  // FIXED: Some code was deleted here (Local variables).
+
 }
 
 %%
 /* The rules.  */
 {int}         {
                 int val = 0;
-  // FIXME: Some code was deleted here (Decode, and check the value).
+                val = atoi(text());
+  // FIXED: Some code was deleted here (Decode, and check the value).
                 return TOKEN_VAL(INT, val);
               }
-  /* FIXME: Some code was deleted here. */
+  /* FIXED: Some code was deleted here. */
+"&"           {return TOKEN(AND);}
+"array"       {return TOKEN(ARRAY);}
+":="          {return TOKEN(ASSIGN);}
+"break"       {return TOKEN(BREAK);}
+"cast"        {return TOKEN(CAST);}
+"class"       {return TOKEN(CLASS);}
+":"           {return TOKEN(COLON);}
+","           {return TOKEN(COMMA);}
+"/"           {return TOKEN(DIVIDE);}
+"do"          {return TOKEN(DO);}
+"."           {return TOKEN(DOT);}
+"else"        {return TOKEN(ELSE);}
+"end"         {return TOKEN(END);}
+"="           {return TOKEN(EQ);}
+"extends"     {return TOKEN(EXTENDS);}
+"for"         {return TOKEN(FOR);}
+"function"    {return TOKEN(FUNCTION);}
+">="          {return TOKEN(GE);}
+">"           {return TOKEN(GT);}
+"if"          {return TOKEN(IF);}
+"import"      {return TOKEN(IMPORT);}
+"in"          {return TOKEN(IN);}
+"{"           {return TOKEN(LBRACE);}
+"["           {return TOKEN(LBRACK);}
+"<="          {return TOKEN(LE);}
+"let"         {return TOKEN(LET);}
+"("           {return TOKEN(LPAREN);}
+"<"           {return TOKEN(LT);}
+"-"           {return TOKEN(MINUS);}
+"method"      {return TOKEN(METHOD);}
+"<>"          {return TOKEN(NE);}
+"new"         {return TOKEN(NEW);}
+"nil"         {return TOKEN(NIL);}
+"of"          {return TOKEN(OF);}
+"|"           {return TOKEN(OR);}
+"+"           {return TOKEN(PLUS);}
+"primitive"   {return TOKEN(PRIMITIVE);}
+"}"           {return TOKEN(RBRACE);}
+"]"           {return TOKEN(RBRACK);}
+")"           {return TOKEN(RPAREN);}
+";"           {return TOKEN(SEMI);}
+"then"        {return TOKEN(THEN);}
+"*"           {return TOKEN(TIMES);}
+"to"          {return TOKEN(TO);}
+"type"        {return TOKEN(TYPE);}
+"var"         {return TOKEN(VAR);}
+"while"       {return TOKEN(WHILE);}
+EOF           {return TOKEN(EOF);}
+{string}      {return TOKEN_VAL(STRING, text());}
+{id}          {return TOKEN_VAL(ID, text());}
+
+
 %%
 
 
