@@ -151,9 +151,22 @@
        VAR          "var"
        WHILE        "while"
        EOF 0        "end of file"
+       EXP "_exp";
+
+// FIXED: Some code was deleted here (Priorities/associativities).
+%precedence THEN
+%precedence ELSE DO OF ASSIGN
 
 
-  // FIXME: Some code was deleted here (Priorities/associativities).
+%left "|"
+%left "&"
+%nonassoc "<" ">" "<=" ">=" "<>"
+%left "+" "-"
+%left "*" "/"
+
+
+
+
 
 // Solving conflicts on:
 // let type foo = bar
@@ -161,9 +174,16 @@
 // which can be understood as a list of two TypeChunk containing
 // a unique TypeDec each, or a single TypeChunk containing two TypeDec.
 // We want the latter.
+
+// FIXED: Some code was deleted here (Other declarations).
+
 %precedence CHUNKS
+
 %precedence TYPE
-  // FIXME: Some code was deleted here (Other declarations).
+%precedence FUNCTION
+%precedence PRIMITIVE
+%precedence CLASS
+  
 
 %start program
 
@@ -177,9 +197,100 @@ program:
    
 ;
 
+exps:
+  %empty
+  | exps.1           
+  ;
+exps.1:
+   exps.1 ";" exps.2
+   | exps.2
+   ;
+exps.2:
+   exp
+   ;
+
+
 exp:
-  INT
-   
+  "nil"
+  | INT
+  | STRING
+
+  /* Array and record creations. */
+  | typeid "[" exp "]" "of" exp
+  | typeid "{" idexp "}"
+
+  /* Variables, field, elements of an array. */
+  | lvalue
+
+  /* Function call. */
+  | ID "(" funcall ")"
+
+  /* Operations. */
+  | "-" exp
+  | exp "+" exp
+  | exp "-" exp
+  | exp "*" exp
+  | exp "/" exp
+  | exp ">=" exp
+  | exp "<=" exp
+  | exp "<>" exp
+  | exp ">" exp
+  | exp "<" exp
+  | exp "&" exp
+  | exp "|" exp
+  | "(" exps ")"
+  /* Assignment. */
+  | lvalue ":=" exp
+
+  /* Control structures. */
+  | "if" exp "then" exp "else" exp
+  | "if" exp "then" exp
+  | "while" exp "do" exp
+  | "for" ID ":=" exp "to" exp "do" exp
+  | "break"
+  | "let" chunks "in" exps "end"
+  
+  /* object-oriented */
+  | "new" typeid
+  | lvalue "." ID "(" funcall ")"
+  /* Cast of an expression to a given type */
+  | CAST "(" exp "," ty ")"
+  /* An expression metavariable */
+  | EXP "(" INT ")"
+  ;
+%token LVALUE "_lvalue";
+lvalue:
+  ID
+  | lvalue "." ID
+  | lvalue "{" exp "}"
+  /* A l-value metavariable */
+  | LVALUE "(" INT ")"
+  ;
+
+
+funcall:
+  %empty
+  | funcall.1           
+  ;
+funcall.1:
+   funcall.1 "," funcall.2
+   | funcall.2
+   ;
+funcall.2:
+   exp
+   ;
+
+idexp:
+  %empty
+  | idexp.1           
+  ;
+idexp.1:
+   idexp.1 "," idexp.2
+   | idexp.2
+   ;
+idexp.2:
+   ID "=" exp
+   ;
   // FIXME: Some code was deleted here (More rules).
 
 /*---------------.
@@ -199,9 +310,30 @@ chunks:
      which is why we end the recursion with a %empty. */
   %empty                  
 | tychunk   chunks        
-  // FIXME: Some code was deleted here (More rules).
+| funchunk chunks
+| vardec
+/* A list of chunk metavariable */
+| CHUNKS "(" INT ")" chunks
+// FIXME: Some code was deleted here (More rules).
 ;
+funchunk:
+  fundec %prec CHUNKS  
+| fundec funchunk       
+;  
 
+fundec:
+  "function" ID "(" tyfields ")" type.1 "=" exp
+  | "primitive" ID "(" tyfields ")" type.1
+  ;
+
+vardec:
+  "var" ID type.1 ":=" exp
+  ;
+
+type.1:
+  %empty
+  | ":" typeid
+  ;
 /*--------------------.
 | Type Declarations.  |
 `--------------------*/
@@ -214,13 +346,16 @@ tychunk:
 ;
 
 tydec:
-  "type" ID "=" ty 
-;
-
+  "type" ID "=" ty
+  /* object-oriented */
+  | "class" ID ext "{" classfields "}"
+  ;
 ty:
   typeid               
 | "{" tyfields "}"     
-| "array" "of" typeid  
+| "array" "of" typeid
+/* object-oriented */
+| "class" ext "{" classfields "}"
 ;
 
 tyfields:
@@ -236,6 +371,28 @@ tyfields.1:
 tyfield:
   ID ":" typeid     
 ;
+
+ext:
+  %empty
+  | "extends" typeid
+  ;
+
+classfields:
+  %empty
+  | classfields classfield
+  ;
+classfield:
+  vardec
+  | meth.1
+  ;
+
+meth.1:
+  %empty
+  | meth.1 meth
+  ;
+meth:
+  "method" ID "(" tyfields ")" type.1 "=" exp
+  ;
 
 %token NAMETY "_namety";
 typeid:
