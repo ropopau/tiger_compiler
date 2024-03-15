@@ -155,7 +155,7 @@
 
 // FIXED: Some code was deleted here (Priorities/associativities).
 %precedence THEN
-%precedence ELSE DO OF ASSIGN
+%precedence ELSE DO OF ASSIGN WHILE 
 
 
 %left "|"
@@ -176,7 +176,7 @@
 // We want the latter.
 
 // FIXED: Some code was deleted here (Other declarations).
-
+%precedence VAR
 %precedence CHUNKS
 
 %precedence TYPE
@@ -217,7 +217,7 @@ exp:
 
   /* Array and record creations. */
   | typeid "[" exp "]" "of" exp
-  | typeid "{" idexp "}"
+  | typeid "{" tyfields "}"
 
   /* Variables, field, elements of an array. */
   | lvalue
@@ -279,8 +279,8 @@ funcall.1:
 funcall.2:
    exp
    ;
-
-idexp:
+/*
+:idexp:
   %empty
   | idexp.1           
   ;
@@ -292,7 +292,7 @@ idexp.2:
    ID "=" exp
    ;
   // FIXME: Some code was deleted here (More rules).
-
+*/
 /*---------------.
 | Declarations.  |
 `---------------*/
@@ -322,18 +322,17 @@ funchunk:
 ;  
 
 fundec:
-  "function" ID "(" tyfields ")" type.1 "=" exp
-  | "primitive" ID "(" tyfields ")" type.1
+  "function" ID "(" tyfields ")" "=" exp
+  | "function" ID "(" tyfields ")" typeid "=" exp
+  | "primitive" ID "(" tyfields ")" 
+  | "primitive" ID "(" tyfields ")" typeid
   ;
 
 vardec:
-  "var" ID type.1 ":=" exp
+  "var" ID ":=" exp
+  | "var" ID typeid ":=" exp
   ;
 
-type.1:
-  %empty
-  | ":" typeid
-  ;
 /*--------------------.
 | Type Declarations.  |
 `--------------------*/
@@ -347,15 +346,13 @@ tychunk:
 
 tydec:
   "type" ID "=" ty
-  /* object-oriented */
-  | "class" ID ext "{" classfields "}"
+//  | "class" ID ext "{" classfields "}"
   ;
 ty:
   typeid               
 | "{" tyfields "}"     
 | "array" "of" typeid
-/* object-oriented */
-| "class" ext "{" classfields "}"
+//| "class" ext "{" classfields "}"
 ;
 
 tyfields:
@@ -372,27 +369,28 @@ tyfield:
   ID ":" typeid     
 ;
 
-ext:
-  %empty
-  | "extends" typeid
-  ;
+//ext:
+//  %empty
+//  | "extends" typeid
+//  ;
 
-classfields:
-  %empty
-  | classfields classfield
-  ;
-classfield:
-  vardec
-  | meth.1
-  ;
+//classfields:
+//  %empty
+//  | classfields classfield
+//  ;
+//classfield:
+//  vardec
+//  | meth.1
+//  ;
 
-meth.1:
-  %empty
-  | meth.1 meth
-  ;
-meth:
-  "method" ID "(" tyfields ")" type.1 "=" exp
-  ;
+//meth.1:
+//  %empty
+//  | meth.1 meth
+//  ;
+//meth:
+//  "method" ID "(" tyfields ")" "=" exp
+//  | "method" ID "(" tyfields ")" typeid "=" exp
+//  ;
 
 %token NAMETY "_namety";
 typeid:
