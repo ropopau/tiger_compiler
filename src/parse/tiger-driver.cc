@@ -27,7 +27,7 @@ namespace parse
   /// Set the scanner traces.
   TigerDriver& TigerDriver::scan_trace(bool b)
   {
-    scan_trace_p_ = b;
+    this->scan_trace_p_ = b;
     return *this;
   }
 
@@ -88,11 +88,12 @@ namespace parse
       }
 
     // FIXED: Some code was deleted here (Initialize Lexer and enable scan traces).
-    auto lex = Lexer();
-    std::cout << "okok\n";
+    auto lex = Lexer(*in);
+    lex.set_debug(scan_trace_p_);
     // FIXED: Some code was deleted here (Initialize the parser and enable parse traces).
     auto pars = parser(*this, lex);
-    std::cout << "ikik\n";
+    pars.set_debug_level(parse_trace_p_);
+    
     // FIXED: Some code was deleted here (Run the parser).
     pars.parse();
     ast_type res = ast_;
@@ -197,7 +198,6 @@ namespace parse
     library_.pop_current_directory();
     return res;
   }
-
   const misc::error& TigerDriver::error_get() const { return error_; }
 
 } // namespace parse

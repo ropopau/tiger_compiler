@@ -155,7 +155,7 @@
 
 // FIXED: Some code was deleted here (Priorities/associativities).
 %precedence THEN
-%precedence ELSE DO OF ASSIGN WHILE 
+%precedence ELSE DO OF ASSIGN 
 
 
 %left "|"
@@ -216,8 +216,8 @@ exp:
   | STRING
 
   /* Array and record creations. */
-  | typeid "[" exp "]" "of" exp
-  | typeid "{" tyfields "}"
+  | ID "[" exp "]" "of" exp
+  | ID "{" ty "}"
 
   /* Variables, field, elements of an array. */
   | lvalue
@@ -227,7 +227,7 @@ exp:
 
   /* Operations. */
   | "-" exp
-  | exp "+" exp
+  | exp "+" exp  
   | exp "-" exp
   | exp "*" exp
   | exp "/" exp
