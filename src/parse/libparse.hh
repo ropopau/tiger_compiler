@@ -9,18 +9,10 @@
 #include <string>
 #include <utility>
 
+#include <ast/fwd.hh>
 #include <misc/error.hh>
 #include <misc/file-library.hh>
 #include <parse/fwd.hh>
-
-// This forward declarations is provided to allow the compilation of
-// the project without the `ast' module at TC-1.  Remove it as soon
-// as this module is available (i.e., at TC-2).
-namespace ast
-{
-  class ChunkInterface;
-
-} // namespace ast
 
 /// Parsing the input, delivering an ast::Ast.
 namespace parse
@@ -64,5 +56,13 @@ namespace parse
   /// The declaration of the _main function is automatically added.
   ast::ChunkList* parse_unit(const std::string& str,
                              bool enable_object_extensions_p = false);
+
+  /// \brief Parse a set of declarations.
+  ///
+  /// Wrapper around parse::parse to return the single ast::ChunkInterface
+  /// to be found in the input (expected to contain ChunkList).
+  ///
+  /// Used by desugar::BoundsCheckingVisitor and object::ObjectDesugarVisitor.
+  ast::ChunkInterface* parse_chunks(Tweast& in);
 
 } // namespace parse

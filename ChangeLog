@@ -1,3 +1,9 @@
+2024-03-05  Mael Cravero  <mael.cravero@epita.fr>
+
+	Version 1.93.a for 2025-tc-1.0
+
+	* NEWS.txt, configure.ac, .last-cl-gen, ChangeLog, Makefile.am: here.
+
 2024-03-04  Ghislain Bonnard  <ghislain.bonnard@epita.fr>
 
 	ast: change marks for def_ accessors
