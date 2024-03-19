@@ -235,7 +235,6 @@ program:
    { td.ast_ = $1; }
 ;
 
-<<<<<<< HEAD
 exps:
   %empty
   | exps.1           
@@ -247,17 +246,11 @@ exps.1:
 exps.2:
    exp
    ;
-=======
 exp:
   INT
    { $$ = make_IntExp(@$, $1); }
   // FIXME: Some code was deleted here (More rules).
->>>>>>> 2026-tc-2.0
-
-
-exp:
-  "nil"
-  | INT
+  | "nil"
   | STRING
 
   /* Array and record creations. */
@@ -390,16 +383,6 @@ tychunk:
 ;
 
 tydec:
-<<<<<<< HEAD
-  "type" ID "=" ty
-//  | "class" ID ext "{" classfields "}"
-  ;
-ty:
-  typeid               
-| "{" tyfields "}"     
-| "array" "of" typeid
-//| "class" ext "{" classfields "}"
-=======
   "type" ID "=" ty { $$ = make_TypeDec(@$, $2, $4); }
 ;
 
@@ -407,7 +390,6 @@ ty:
   typeid               { $$ = $1; }
 | "{" tyfields "}"     { $$ = make_RecordTy(@$, $2); }
 | "array" "of" typeid  { $$ = make_ArrayTy(@$, $3); }
->>>>>>> 2026-tc-2.0
 ;
 
 tyfields:
