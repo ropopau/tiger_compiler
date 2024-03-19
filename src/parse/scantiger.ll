@@ -63,15 +63,19 @@
 
 /* Abbreviations.  */
 int             [0-9]+
-  /* FIXED: Some code was deleted here. */
-string          "\""([^\\]|\\.)*"\""
-id              [a-zA-Z][_a-zA-Z0-9]*
+num             [0-7]{3}
+xnum            [0-9A-Fa-f]{2}
+
+/* FIXED: Some code was deleted here. */
+id              [a-zA-Z][_a-zA-Z0-9]
+id_main         "_main"
 
 %class{
   // FIXED: Some code was deleted here (Local variables).
-
+  std::string string_actu;
+  std::string comment_actu;
 }
-
+:
 %%
 /* The rules.  */
 {int}         {
@@ -122,15 +126,32 @@ id              [a-zA-Z][_a-zA-Z0-9]*
 "]"           {return TOKEN(RBRACK);}
 ")"           {return TOKEN(RPAREN);}
 ";"           {return TOKEN(SEMI);}
-"then"        {return TOKEN(THEN);}
+"then"        {return TOKEN(THEN);}   
 "*"           {return TOKEN(TIMES);}
 "to"          {return TOKEN(TO);}
 "type"        {return TOKEN(TYPE);}
 "var"         {return TOKEN(VAR);}
 "while"       {return TOKEN(WHILE);}
+{id}|{id_main}      {return TOKEN_VAL(ID, text())}
 EOF           {return TOKEN(EOF);}
-{string}      {return TOKEN_VAL(STRING, text());}
-{id}          {return TOKEN_VAL(ID, text());}
+
+
+
+"/*"         { comment_actu.clear(); start(SC_COMMENT);}
+"\""          { string_actu.clear(); start(SC_STRING);}
+
+<SC_STRING> {
+  .       {string_actu.append();}
+  EOF     {td.error_ << misc::error::error_type::scan << td.location_  << ": string never ends: `" << "'\n";}
+  "\""    {return TOKEN_VAL(STRING, string_actu);}
+}
+
+<SC_COMMENT> {
+  "/*"   {start(SC_COMMENT);}
+  "*/"    {td.location_.columns(yyleng);}
+  .       {td.location_.columns(yyleng);}
+  
+}
 
 
 %%
