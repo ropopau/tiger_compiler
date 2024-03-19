@@ -72,10 +72,11 @@ id_main         "_main"
 
 %class{
   // FIXED: Some code was deleted here (Local variables).
+  int nb_comment = 0;
   std::string string_actu;
   std::string comment_actu;
 }
-:
+
 %%
 /* The rules.  */
 {int}         {
@@ -132,25 +133,19 @@ id_main         "_main"
 "type"        {return TOKEN(TYPE);}
 "var"         {return TOKEN(VAR);}
 "while"       {return TOKEN(WHILE);}
-{id}|{id_main}      {return TOKEN_VAL(ID, text())}
-EOF           {return TOKEN(EOF);}
+{id}     {return TOKEN_VAL(ID, text());}
+<<EOF>>           {std::cout << "test\n"; return TOKEN(EOF);}
 
+// COMMENT
 
+"/*"         { nb_comment += 1; comment_actu.clear(); start(SC_COMMENT);}
 
-"/*"         { comment_actu.clear(); start(SC_COMMENT);}
-"\""          { string_actu.clear(); start(SC_STRING);}
+<SC_COMMENT>{
 
-<SC_STRING> {
-  .       {string_actu.append();}
-  EOF     {td.error_ << misc::error::error_type::scan << td.location_  << ": string never ends: `" << "'\n";}
-  "\""    {return TOKEN_VAL(STRING, string_actu);}
-}
+"/*" { nb_comment += 1 ;}
+"*/" { if (nb_comment == 1) {nb_comment -=1;start(INITIAL);} else {nb_comment -=1;} ;}
+<<EOF>> {  std::cout << "fdsafdsaf\n"; td.error_ << misc::error::error_type::scan << td.location_<< " unexpected EOF\n"; start(INITIAL); }
 
-<SC_COMMENT> {
-  "/*"   {start(SC_COMMENT);}
-  "*/"    {td.location_.columns(yyleng);}
-  .       {td.location_.columns(yyleng);}
-  
 }
 
 
