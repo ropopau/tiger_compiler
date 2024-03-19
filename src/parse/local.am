@@ -100,6 +100,8 @@ src_libtc_la_SOURCES +=                                                        \
   %D%/metavar-map.hh %D%/metavar-map.hxx                                       \
   %D%/tiger-driver.hh %D%/tiger-driver.cc                                      \
   %D%/tweast.hh %D%/tweast.cc %D%/tweast.hxx
+src_libtc_la_SOURCES +=                                                        \
+  %D%/tiger-factory.hh %D%/tiger-factory.hxx
 
 FORMAT_IGNORE += $REFLEX_HEADER
 

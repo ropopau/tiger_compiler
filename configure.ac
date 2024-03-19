@@ -12,7 +12,7 @@ AC_PREREQ([2.64])
 ## Package set up.  ##
 ## ---------------- ##
 
-AC_INIT([LRE Tiger Compiler], [1.93.a], [tiger@lrde.epita.fr], [tc],
+AC_INIT([LRE Tiger Compiler], [1.93.b], [tiger@lrde.epita.fr], [tc],
         [http://tiger.lrde.epita.fr])
 
 # Auxiliary files.
@@ -240,7 +240,27 @@ BOOST_PROGRAM_OPTIONS
 BOOST_STRING_ALGO
 BOOST_SYSTEM
 
-  dnl FIXME: Some code was deleted here.
+## ------ ##
+## Tcsh.  ##
+## ------ ##
+
+# Check for Darwin to help Libtool use the right dynamic module
+# extension on this system.
+AM_CONDITIONAL([DARWIN], [echo "$host_os" | grep -q '^darwin'])
+TC_WITH_TCSH([with_tcsh=yes], [with_tcsh=no])
+AM_CONDITIONAL([ENABLE_TCSH], [test x$with_tcsh = xyes])
+if test x$with_tcsh = xyes; then
+  AC_DEFINE([WITH_SWIG], [1], [Define if building with swig.])
+else
+  AC_DEFINE([WITH_SWIG], [0], [Define if building with swig.])
+fi
+
+AC_CONFIG_FILES([tcsh/Makefile tcsh/python/Makefile])
+
+# The Doxyfile is directly generated via `sed' (see doc/local.am)
+# AC_CONFIG_FILES([doc/Doxyfile])
+
+AX_CONFIG_SCRIPTS([tcsh/run])
 
 ## ------- ##
 ## Tests.  ##

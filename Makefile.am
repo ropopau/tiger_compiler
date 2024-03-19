@@ -25,6 +25,9 @@ include build-aux/local.am
 include data/local.am
 
 SUBDIRS = . tests
+if ENABLE_TCSH
+SUBDIRS += tcsh
+endif
 
 # Most headers are to be shipped and to be found in src/, e.g.
 # tasks/tasks.hh is shipped in $(top_srcdir)/src/task/tasks.hh.  Some
