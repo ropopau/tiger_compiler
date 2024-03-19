@@ -93,7 +93,7 @@ namespace parse
     // FIXED: Some code was deleted here (Initialize the parser and enable parse traces).
     auto pars = parser(*this, lex);
     pars.set_debug_level(parse_trace_p_);
-    
+
     // FIXED: Some code was deleted here (Run the parser).
     pars.parse();
     ast_type res = ast_;
