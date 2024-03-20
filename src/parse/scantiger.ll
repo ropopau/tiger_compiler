@@ -65,16 +65,18 @@
 int             [0-9]+
 num             [0-7]{3}
 xnum            [0-9A-Fa-f]{2}
+string          "\""([^\\]|\\.)*"\""
 
 /* FIXED: Some code was deleted here. */
-id              [a-zA-Z][_a-zA-Z0-9]
+id              [a-zA-Z][_a-zA-Z0-9]*
 id_main         "_main"
 
 %class{
   // FIXED: Some code was deleted here (Local variables).
   int nb_comment = 0;
-  std::string string_actu;
-  std::string comment_actu;
+  int string_len = 0;
+  std::string actu = "";
+ 
 }
 
 %%
@@ -86,6 +88,8 @@ id_main         "_main"
                 return TOKEN_VAL(INT, val);
               }
   /* FIXED: Some code was deleted here. */
+
+[\n\r(\n\r)(\r\n)]     {td.location_.lines(yyleng);}
 "&"           {return TOKEN(AND);}
 "array"       {return TOKEN(ARRAY);}
 ":="          {return TOKEN(ASSIGN);}
@@ -133,23 +137,38 @@ id_main         "_main"
 "type"        {return TOKEN(TYPE);}
 "var"         {return TOKEN(VAR);}
 "while"       {return TOKEN(WHILE);}
+
 {id}     {return TOKEN_VAL(ID, text());}
-<<EOF>>           {std::cout << "test\n"; return TOKEN(EOF);}
+"\""      {start(SC_STRING);}
+
+
+// STRING
+
+
+<SC_STRING>{
+[\n\r(\n\r)(\r\n)]  {td.error_ << td.location_ << ": " << misc::error::error_type::scan  << "Unexpected \\n found\n"; start(INITIAL);}
+"\""      {return TOKEN_VAL(STRING,actu);}
+. { actu = actu.append(text());}
+<<EOF>> { td.error_ << td.location_ << ": " << misc::error::error_type::scan << "Unexpected EOF found\n" ; start(INITIAL); }
+}
 
 // COMMENT
 
-"/*"         { nb_comment += 1; comment_actu.clear(); start(SC_COMMENT);}
+"/*"         { nb_comment += 1; start(SC_COMMENT);}
 
 <SC_COMMENT>{
-
 "/*" { nb_comment += 1 ;}
-"*/" { if (nb_comment == 1) {nb_comment -=1;start(INITIAL);} else {nb_comment -=1;} ;}
-<<EOF>> {  std::cout << "fdsafdsaf\n"; td.error_ << misc::error::error_type::scan << td.location_<< " unexpected EOF\n"; start(INITIAL); }
-
+"*/" { if (nb_comment == 1)
+ {
+  nb_comment -=1;
+  start(INITIAL);
+ } 
+ else 
+ {
+  nb_comment -=1;
+  } ;}
+. {}
+<<EOF>> {  td.error_ << td.location_ << ": "  << misc::error::error_type::scan << "Unexpected EOF found\n" ; start(INITIAL); }
 }
-
-
+<<EOF>>    { return TOKEN(EOF);}
 %%
-
-
-

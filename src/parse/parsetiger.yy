@@ -370,7 +370,7 @@ fundec:
 
 vardec:
   "var" ID ":=" exp { $$ = make_VarDec(@$, $2, nullptr, $4); }
-  | "var" ID typeid ":=" exp { $$ = make_VarDec(@$, $2, $3, $4); }
+  | "var" ID ":" typeid ":=" exp { $$ = make_VarDec(@$, $2, $3, $4); }
   ;
 
 /*--------------------.
