@@ -228,11 +228,9 @@
 %%
 program:
   /* Parsing a source program.  */
-  exp
-   { td.ast_ = $1; }
+  exp { td.ast_ = $1; }
 | /* Parsing an imported file.  */
-  chunks
-   { td.ast_ = $1; }
+  chunks { td.ast_ = $1; }
 ;
 
 exps:
@@ -247,75 +245,75 @@ exps.2:
    exp
    ;
 exp:
-  INT
-   { $$ = make_IntExp(@$, $1); }
+  INT { $$ = make_IntExp(@$, $1); }
   // FIXME: Some code was deleted here (More rules).
-  | "nil"
-  | STRING
+  | "nil" { $$ = make_NilExp(@$, $1); }
+  | STRING { $$ = make_StringExp(@$, $1); }
 
   /* Array and record creations. */
-  | ID "[" exp "]" "of" exp
-  | ID "{" ty "}"
+  | ID "[" exp "]" "of" exp { $$ = make_ArrayExp(@$, $1, $3, $6); }
+  | ID "{" ty "}" { $$ = make_RecordExp(@$, $1, $3); }
 
   /* Variables, field, elements of an array. */
   | lvalue
 
   /* Function call. */
-  | ID "(" funcall ")"
+  | ID "(" funcall ")" 
 
   /* Operations. */
-  | "-" exp
-  | exp "+" exp  
-  | exp "-" exp
-  | exp "*" exp
-  | exp "/" exp
-  | exp ">=" exp
-  | exp "<=" exp
-  | exp "<>" exp
-  | exp ">" exp
-  | exp "<" exp
-  | exp "&" exp
+  | "-" exp { $$ = make_OpExp(@$, nullptr, ast::OpExp::Oper::sub, $2); }
+  | exp "+" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::add, $3); }
+  | exp "-" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::sub, $3); }
+  | exp "*" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::mul, $3); }
+  | exp "/" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::div, $3); }
+  | exp ">=" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::ge, $3); }
+  | exp "<=" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::le, $3); }
+  | exp "<>" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::ne, $3); }
+  | exp ">" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::gt, $3); }
+  | exp "<" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::lt, $3); }
+  | exp "&" exp 
   | exp "|" exp
-  | "(" exps ")"
+  | "(" exps ")" { $$ = make_SeqExp(@$, $2); }
   /* Assignment. */
   | lvalue ":=" exp
 
   /* Control structures. */
-  | "if" exp "then" exp "else" exp
-  | "if" exp "then" exp
-  | "while" exp "do" exp
-  | "for" ID ":=" exp "to" exp "do" exp
-  | "break"
-  | "let" chunks "in" exps "end"
+  | "if" exp "then" exp "else" exp { $$ = make_IfExp(@$, $2, $4, $6); }
+  | "if" exp "then" exp { $$ = make_IfExp(@$, $2, $4); }
+  | "while" exp "do" exp { $$ = make_WhileExp(@$, $2, $4); }
+  | "for" ID ":=" exp "to" exp "do" exp 
+   { $$ = make_ForExp(@$, make_VardecExp(@$, $2, nullptr, $4), $6, $8); }
+  | "break" { $$ = make_BreakExp(@$); }
+  | "let" chunks "in" exps "end" { $$ = make_LetExp(@$, $2, $4); }
   
   /* object-oriented */
   | "new" typeid
   | lvalue "." ID "(" funcall ")"
   /* Cast of an expression to a given type */
-  | CAST "(" exp "," ty ")"
+  | CAST "(" exp "," ty ")" { $$ = make_CastExp(@$, $3, $5); }
   /* An expression metavariable */
-  | EXP "(" INT ")"
+  | EXP "(" INT ")" { $$ = metavar<ast::Exp>(td, $3); }
   ;
 %token LVALUE "_lvalue";
 lvalue:
   ID
   | lvalue "." ID
-  | lvalue "{" exp "}"
+  | lvalue "{" exp "}" $$ = make_TypeChunk(@1); $$->push_fron
   /* A l-value metavariable */
   | LVALUE "(" INT ")"
   ;
 
 
 funcall:
-  %empty
-  | funcall.1           
+  %empty { $$ = make_CallExp(); }
+  | funcall.1 { $$ = $1; }        
   ;
 funcall.1:
-   funcall.1 "," funcall.2
-   | funcall.2
+   funcall.1 "," funcall.2 { $$ = $1; $$->emplace_back($3);}
+   | funcall.2 { $$ = $1; }
    ;
 funcall.2:
-   exp
+   exp { $$ = $1; }
    ;
 /*
 :idexp:
@@ -348,27 +346,31 @@ chunks:
      which is why we end the recursion with a %empty. */
   %empty                  { $$ = make_ChunkList(@$); }
 | tychunk   chunks        { $$ = $2; $$->push_front($1); }
-| funchunk chunks
-| vardec
+| funchunk chunks         { $$ = $2; $$->push_front($1); }//
+| vardec                  { $$ = $1; }
 /* A list of chunk metavariable */
-| CHUNKS "(" INT ")" chunks
+| CHUNKS "(" INT ")" chunks { $$ = metavar<ast::ChunkList>(td, $3); $$->push_front($1)}
   // FIXME: Some code was deleted here (More rules).
 ;
 funchunk:
-  fundec %prec CHUNKS  
-| fundec funchunk       
+  fundec %prec CHUNKS  { $$ = make_FunctionChunk(@1); $$->push_front(*$1);}
+| fundec funchunk { $$ = $2; $$->push_front(*$1); }
 ;  
 
 fundec:
-  "function" ID "(" tyfields ")" "=" exp
-  | "function" ID "(" tyfields ")" typeid "=" exp
+  "function" ID "(" tyfields ")" "=" exp 
+   { $$ = make_FunctionDec(@$, $2, $4, nullptr, $8); }
+  | "function" ID "(" tyfields ")" typeid "=" exp 
+   { $$ = make_FunctionDec(@$, $2, $4, $6, $8); }
   | "primitive" ID "(" tyfields ")" 
+   { $$ = make_FunctionDec(@$, $2, $4, nullptr, nullptr); }
   | "primitive" ID "(" tyfields ")" typeid
+   { $$ = make_FunctionDec(@$, $2, $4, $6, nullptr); }
   ;
 
 vardec:
-  "var" ID ":=" exp
-  | "var" ID typeid ":=" exp
+  "var" ID ":=" exp { $$ = make_VarDec(@$, $2, nullptr, $4); }
+  | "var" ID typeid ":=" exp { $$ = make_VarDec(@$, $2, $3, $4); }
   ;
 
 /*--------------------.
