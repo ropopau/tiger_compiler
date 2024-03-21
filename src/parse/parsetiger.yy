@@ -193,7 +193,7 @@
 
 
 
-%type <ast::Exp*>             exp
+%type <ast::Exp*>             exp exps.2 funcall.2
 %type <ast::ChunkList*>       chunks
 
 %type <ast::TypeChunk*>       tychunk
@@ -201,9 +201,19 @@
 %type <ast::NameTy*>          typeid
 %type <ast::Ty*>              ty
 
-%type <ast::Field*>           tyfield
-%type <ast::fields_type*>     tyfields tyfields.1
-  // FIXME: Some code was deleted here (More %types).
+%type <ast::Field*>           tyfield 
+%type <ast::fields_type*>     tyfields tyfields.1 
+
+
+// FIXME: Some code was deleted here (More %types).
+%type <ast::exps_type*>       exps exps.1 funcall funcall.1
+%type <ast::FunctionChunk*>   funchunk
+%type <ast::Var*>             lvalue
+%type <ast::VarDec*>          vardec
+%type <ast::VarChunk*>        varchunk
+%type <ast::FunctionDec*>     fundec
+%type <ast::FieldInit*>       rec.2 
+%type <ast::fieldinits_type*> rec rec.1   
 
 
 // Solving conflicts on:
@@ -233,35 +243,53 @@ program:
   chunks { td.ast_ = $1; }
 ;
 
-exps:
-  %empty
-  | exps.1           
+exps: 
+  %empty { $$ = make_exps_type(); }
+  | exps.1  { $$ = $1; }    
   ;
+
 exps.1:
-   exps.1 ";" exps.2
-   | exps.2
+   exps.1 ";" exps.2  { $$ = $1; $$->emplace_back($3);}
+   | exps.2 { $$ = make_exps_type(); $$->emplace_back($1);}
    ;
+
 exps.2:
-   exp
+   exp { $$ = $1; }
    ;
+
+
+rec:
+  %empty          { $$ =  make_fieldinits_type(); }
+| rec.1           { $$ =  $1; }
+;
+rec.1:
+  rec.1 "," rec.2 { $$ = $1; $$->emplace_back($3); }
+| rec.2        { $$ =  make_fieldinits_type(); $$->emplace_back($1); }
+;
+
+rec.2:
+  ID "=" exp   { $$ =  make_FieldInit(@$, $1, $3); }
+;
+
+
+
 exp:
   INT { $$ = make_IntExp(@$, $1); }
   // FIXME: Some code was deleted here (More rules).
-  | "nil" { $$ = make_NilExp(@$, $1); }
+  | "nil" { $$ = make_NilExp(@$); }
   | STRING { $$ = make_StringExp(@$, $1); }
 
   /* Array and record creations. */
-  | ID "[" exp "]" "of" exp { $$ = make_ArrayExp(@$, $1, $3, $6); }
-  | ID "{" ty "}" { $$ = make_RecordExp(@$, $1, $3); }
+  | ID "[" exp "]" "of" exp { $$ = make_ArrayExp(@$, make_NameTy(@$, $1), $3, $6); }
+  | ID "{" rec "}" { $$ = make_RecordExp(@$, make_NameTy(@$, $1),$3); }
 
   /* Variables, field, elements of an array. */
-  | lvalue
+  | lvalue {$$ = $1;}
 
   /* Function call. */
-  | ID "(" funcall ")" 
-
+  | ID "(" funcall ")"  {$$ = make_CallExp(@$, $1, $3);}
   /* Operations. */
-  | "-" exp { $$ = make_OpExp(@$, nullptr, ast::OpExp::Oper::sub, $2); }
+  | "-" exp { $$ = make_OpExp(@$, make_IntExp(@$, 0), ast::OpExp::Oper::sub, $2); }
   | exp "+" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::add, $3); }
   | exp "-" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::sub, $3); }
   | exp "*" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::mul, $3); }
@@ -271,50 +299,51 @@ exp:
   | exp "<>" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::ne, $3); }
   | exp ">" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::gt, $3); }
   | exp "<" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::lt, $3); }
-  | exp "&" exp 
-  | exp "|" exp
+  | exp "&" exp  //{$$ = make_IntExp(@$, $1 & $3);}
+  | exp "|" exp  //{$$ = make_IntExp(@$, $1 | $3);}
   | "(" exps ")" { $$ = make_SeqExp(@$, $2); }
   /* Assignment. */
-  | lvalue ":=" exp
+  | lvalue ":=" exp {$$ = make_AssignExp(@$, $1, $3);}
 
   /* Control structures. */
   | "if" exp "then" exp "else" exp { $$ = make_IfExp(@$, $2, $4, $6); }
   | "if" exp "then" exp { $$ = make_IfExp(@$, $2, $4); }
   | "while" exp "do" exp { $$ = make_WhileExp(@$, $2, $4); }
   | "for" ID ":=" exp "to" exp "do" exp 
-   { $$ = make_ForExp(@$, make_VardecExp(@$, $2, nullptr, $4), $6, $8); }
+   { $$ = make_ForExp(@$, make_VarDec(@$, $2, nullptr, $4), $6, $8); }
   | "break" { $$ = make_BreakExp(@$); }
-  | "let" chunks "in" exps "end" { $$ = make_LetExp(@$, $2, $4); }
+  | "let" chunks "in" exp "end" { $$ = make_LetExp(@$, $2, $4); }
   
   /* object-oriented */
-  | "new" typeid
-  | lvalue "." ID "(" funcall ")"
-  /* Cast of an expression to a given type */
+  //| "new" typeid    {}
+  //| lvalue "." ID "(" funcall ")"
+  /* Cast of an expression  to a given type */
   | CAST "(" exp "," ty ")" { $$ = make_CastExp(@$, $3, $5); }
   /* An expression metavariable */
   | EXP "(" INT ")" { $$ = metavar<ast::Exp>(td, $3); }
   ;
 %token LVALUE "_lvalue";
-lvalue:
-  ID
-  | lvalue "." ID
-  | lvalue "{" exp "}" $$ = make_TypeChunk(@1); $$->push_fron
-  /* A l-value metavariable */
-  | LVALUE "(" INT ")"
-  ;
 
+lvalue:
+  ID {$$ = make_SimpleVar(@$, $1);}
+  | lvalue "." ID {$$ = make_FieldVar(@$, $1, $3);}
+  | lvalue "[" exp "]" {$$ = make_SubscriptVar(@$, $1, $3);}
+  /* A l-value metavariable */
+  //| LVALUE "(" INT ")"
+  ;
 
 funcall:
-  %empty { $$ = make_CallExp(); }
-  | funcall.1 { $$ = $1; }        
-  ;
+  %empty               { $$ = make_exps_type(); }
+| funcall.1           { $$ = $1; }
+;
+
 funcall.1:
-   funcall.1 "," funcall.2 { $$ = $1; $$->emplace_back($3);}
-   | funcall.2 { $$ = $1; }
-   ;
+  funcall.1 "," funcall.2 { $$ = $1; $$->emplace_back($3); }
+| funcall.2                { $$ = make_exps_type($1); }
+;
 funcall.2:
-   exp { $$ = $1; }
-   ;
+  exp     { $$ = $1; }
+;
 /*
 :idexp:
   %empty
@@ -345,11 +374,11 @@ chunks:
         end
      which is why we end the recursion with a %empty. */
   %empty                  { $$ = make_ChunkList(@$); }
-| tychunk   chunks        { $$ = $2; $$->push_front($1); }
-| funchunk chunks         { $$ = $2; $$->push_front($1); }//
-| vardec                  { $$ = $1; }
+| tychunk chunks        { $$ = $2; $$->push_front($1);}
+| funchunk chunks         { $$ = $2; $$->push_front($1);}//
+| varchunk chunks         { $$ = $2; $$->push_front($1); }
 /* A list of chunk metavariable */
-| CHUNKS "(" INT ")" chunks { $$ = metavar<ast::ChunkList>(td, $3); $$->push_front($1)}
+//| CHUNKS "(" INT ")" chunks { $$ = metavar<ast::ChunkList>(td, $3); $$->push_front($5)}
   // FIXME: Some code was deleted here (More rules).
 ;
 funchunk:
@@ -359,18 +388,26 @@ funchunk:
 
 fundec:
   "function" ID "(" tyfields ")" "=" exp 
-   { $$ = make_FunctionDec(@$, $2, $4, nullptr, $8); }
+  // { $$ = make_FunctionDec(@$, $2,make_VarChunk(@$), $4,  $7); }
+  { $$ = make_FunctionDec(@$, $2, nullptr, nullptr,  $7); }
   | "function" ID "(" tyfields ")" typeid "=" exp 
-   { $$ = make_FunctionDec(@$, $2, $4, $6, $8); }
+  // { $$ = make_FunctionDec(@$, $2, $4, $6, $8); }
+   { $$ = make_FunctionDec(@$, $2, nullptr, nullptr, $8); }
   | "primitive" ID "(" tyfields ")" 
-   { $$ = make_FunctionDec(@$, $2, $4, nullptr, nullptr); }
+  // { $$ = make_FunctionDec(@$, $2, nullptr, $4, nullptr); }
+  { $$ = make_FunctionDec(@$, $2, nullptr, nullptr, nullptr); }
   | "primitive" ID "(" tyfields ")" typeid
-   { $$ = make_FunctionDec(@$, $2, $4, $6, nullptr); }
+  //  { $$ = make_FunctionDec(@$, $2, $4, $6, nullptr); }
+   { $$ = make_FunctionDec(@$, $2, nullptr, nullptr, nullptr); }
   ;
+
+varchunk:
+  vardec  { $$ = make_VarChunk(@1); $$->push_front(*$1); }
+
 
 vardec:
   "var" ID ":=" exp { $$ = make_VarDec(@$, $2, nullptr, $4); }
-  | "var" ID ":" typeid ":=" exp { $$ = make_VarDec(@$, $2, $3, $4); }
+  | "var" ID ":" typeid ":=" exp { $$ = make_VarDec(@$, $2, $4, $6); }
   ;
 
 /*--------------------.
