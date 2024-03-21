@@ -6,6 +6,7 @@ src_libtc_la_SOURCES +=                                                        \
   %D%/libobject.hxx                                                            \
   %D%/fwd.hh
 
+src_libtc_la_SOURCES += %D%/binder.hh %D%/binder.cc
 
 
 
@@ -14,6 +15,8 @@ src_libtc_la_SOURCES +=                                                        \
 check_PROGRAMS += %D%/test-parse
 %C%_test_parse_LDADD = src/libtc.la
 
+check_PROGRAMS += %D%/test-bind
+%C%_test_bind_LDADD = src/libtc.la
 
 
 

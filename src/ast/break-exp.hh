@@ -32,6 +32,8 @@ namespace ast
 
     /** \name Accessors.
      ** \{ */
+    // FIXME: Some code was deleted here.
+    // FIXME: Some code was deleted here.
     /** \} */
 
   protected:

@@ -70,6 +70,7 @@ namespace ast
     template <typename Container>
       requires misc::ConstIterable<Container>
     void dump_list(const std::string& field, const Container& l);
+    template <typename T> void dump_def(const T& e) const;
     template <typename E> void dump_chunk(const E& e, const std::string& name);
 
     void display_link(unsigned long old_parent_id) const;

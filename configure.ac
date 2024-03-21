@@ -12,7 +12,7 @@ AC_PREREQ([2.64])
 ## Package set up.  ##
 ## ---------------- ##
 
-AC_INIT([LRE Tiger Compiler], [1.93.b], [tiger@lrde.epita.fr], [tc],
+AC_INIT([LRE Tiger Compiler], [1.93.c], [tiger@lrde.epita.fr], [tc],
         [http://tiger.lrde.epita.fr])
 
 # Auxiliary files.

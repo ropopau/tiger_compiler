@@ -49,6 +49,8 @@ namespace ast
     const Var& object_get() const;
     /// Return the object on which the method is called.
     Var& object_get();
+    // FIXME: Some code was deleted here.
+    // FIXME: Some code was deleted here.
     /** \} */
 
   protected:

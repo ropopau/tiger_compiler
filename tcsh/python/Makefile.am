@@ -54,3 +54,4 @@ LOG_COMPILER = $(srcdir)/../run
 TESTS += tests/tc.ipynb tests/ti.ipynb tests/misc.ipynb tests/common.ipynb \
 		 tests/parse.ipynb tests/object.ipynb
 TESTS += tests/ast.ipynb
+TESTS += tests/bind.ipynb tests/escapes.ipynb

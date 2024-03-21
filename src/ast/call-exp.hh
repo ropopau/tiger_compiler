@@ -43,6 +43,8 @@ namespace ast
     const exps_type& args_get() const;
     /// Return list of arguments passed to the function.
     exps_type& args_get();
+    // FIXME: Some code was deleted here.
+    // FIXME: Some code was deleted here.
     /** \} */
 
   protected:

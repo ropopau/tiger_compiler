@@ -18,6 +18,8 @@ namespace ast
 
   /// xalloc slot to enable escapes display in Ast display.
   const misc::xalloc<bool> escapes_display;
+  /// xalloc slot to enable bindings display in Ast display.
+  const misc::xalloc<bool> bindings_display;
 
   // Print the TREE on OSTR.
   std::ostream& operator<<(std::ostream& ostr, const Ast& tree)

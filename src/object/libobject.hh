@@ -10,6 +10,13 @@
 #include <object/fwd.hh>
 
 namespace object
-{} // namespace object
+{
+  /*-------.
+  | Bind.  |
+  `-------*/
+
+  // FIXME: Some code was deleted here.
+
+} // namespace object
 
 #include <object/libobject.hxx>

@@ -31,6 +31,17 @@ namespace ast
     parent_field = old_parent_field;
   }
 
+  template <typename T> inline void DumperDot::dump_def(const T& e) const
+  {
+    const ast::Ast* d = nullptr;
+    // FIXME: Some code was deleted here (set d using definition of e).
+    if (!d)
+      return;
+    ostr_ << parent_id << ":def:s -> " << reinterpret_cast<std::uintptr_t>(d)
+          << ":nodename [constraint=false, style=dashed, color=\"dimgray\"]"
+          << misc::iendl;
+  }
+
   inline void DumperDot::display_link(unsigned long old_parent_id) const
   {
     if (parent_field)

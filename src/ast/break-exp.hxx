@@ -10,4 +10,9 @@
 // Hint: this needs to be done at TC-3.
 
 namespace ast
-{} // namespace ast
+{
+
+  // FIXME: Some code was deleted here.
+  // FIXME: Some code was deleted here.
+
+} // namespace ast
