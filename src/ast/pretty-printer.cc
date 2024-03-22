@@ -53,76 +53,66 @@ namespace ast
 
   void PrettyPrinter::operator()(const CallExp& e)
   {
-    ostr_ << e.name_get();
+    ostr_ << e.name_get() << "(" << misc::separate(e.args_get(), ", ") << ")";
   }
 
   void PrettyPrinter::operator()(const OpExp& e)
   {
-    ostr_ << e.left_get();
+    ostr_ << e.left_get() << " " << str(e.oper_get()) << " " << e.right_get();
   }
 
   void PrettyPrinter::operator()(const RecordExp& e)
   {
-    // FIXED: Some code was deleted here.
-    e.type_name_get().accept(*this);
-    for (auto& exp : e.fields_get())
-      exp->accept(*this);
+    ostr_ << e.type_name_get() << "{" <<misc::separate(e.fields_get(), ", ") << "}";
   }
 
   void PrettyPrinter::operator()(const SeqExp& e)
   {
     // FIXED: Some code was deleted here.
-    for (auto& exp : e.exps_get())
-      exp->accept(*this);
+    ostr_ << "(" << misc::separate(e.exps_get(), ", ") << ")";
   }
 
   void PrettyPrinter::operator()(const AssignExp& e)
   {
     // FIXED: Some code was deleted here.
-    e.var_get().accept(*this);
-    e.exp_get().accept(*this);
+    ostr_ << e.var_get() << " := " << e.exp_get();
   }
+
 
   void PrettyPrinter::operator()(const IfExp& e)
   {
     // FIXED: Some code was deleted here.
-    e.test_get().accept(*this);
-    e.thenclause_get().accept(*this);
-    e.elseclause_get().accept(*this);
+    ostr_ << "if " << e.test_get() << misc::incendl << "then " << e.thenclause_get();
+
   }
 
   void PrettyPrinter::operator()(const WhileExp& e)
   {
-    e.test_get().accept(*this);
-    e.body_get().accept(*this);
+    ostr_ << "while " << e.test_get() << misc::incendl << "do " << e.body_get();
   }
 
   void PrettyPrinter::operator()(const ForExp& e)
   {
-    e.vardec_get().accept(*this);
-    e.hi_get().accept(*this);
-    e.body_get().accept(*this);
+    ostr_ << "for " << e.vardec_get().name_get() << " := " << e.vardec_get().init_get() 
+    << " to " << e.hi_get() << " do " << misc::incendl << e.body_get();
   }
 
 
   void PrettyPrinter::operator()(const LetExp& e)
   {
-    // FIXED: Some code was deleted here.
-    e.chunks_get().accept(*this);
-    e.body_get().accept(*this);
+    ostr_ << "let" << misc::incendl << e.chunks_get() << misc::decindent << "in" << misc::decindent
+    << e.body_get() << misc::decendl << "end";
   }
 
   void PrettyPrinter::operator()(const ArrayExp& e)
   {
-    // FIXED: Some code was deleted here.
-    e.type_name_get().accept(*this);
-    e.size_get().accept(*this);
-    e.init_get().accept(*this);
+  
+    ostr_ << e.type_name_get() << "[" << e.size_get() << "] of " << e.init_get();
   }
 
   void PrettyPrinter::operator()(const FieldInit& e)
   {
-    e.init_get().accept(*this);
+    ostr_ << e.name_get() << " " << e.init_get();
   }
 
   void PrettyPrinter::operator()(const ChunkList& e)
