@@ -82,7 +82,7 @@ id_main         "_main"
 /* The rules.  */
 {int}         {
                 int val = 0;
-                val = atoi(text());
+                val = std::stoi(text());
   // FIXED: Some code was deleted here (Decode, and check the value).
                 return TOKEN_VAL(INT, val);
               }
@@ -213,6 +213,7 @@ else {
 [ \t] {}
 \n|\r|\n\r|\r\n     {td.location_.lines(yyleng);}
 "_exp"        {return TOKEN(EXP);}
+"_lvalue"        {return TOKEN(LVALUE);}
 . {  td.error_ << td.location_ << ": "  << misc::error::error_type::scan << "Unexpected " << text() << " found\n" ; start(INITIAL); }
 
 <<EOF>>    { return TOKEN(EOF);}

@@ -53,23 +53,39 @@ namespace ast
 
   void PrettyPrinter::operator()(const CallExp& e)
   {
-    ostr_ << e.name_get() << "(" << misc::separate(e.args_get(), ", ") << ")";
+    if (e.args_get().size() != 0)
+      ostr_ << e.name_get() << "(" << misc::separate(e.args_get(), ", ") << ")";
   }
+
+  void PrettyPrinter::operator()(const IntExp& e) { ostr_ << e.value_get(); }
 
   void PrettyPrinter::operator()(const OpExp& e)
   {
-    ostr_ << e.left_get() << " " << str(e.oper_get()) << " " << e.right_get();
+    e.left_get().accept(*this);
+    ostr_ << " " << str(e.oper_get()) << " ";
+    e.right_get().accept(*this);
   }
 
   void PrettyPrinter::operator()(const RecordExp& e)
   {
-    ostr_ << e.type_name_get() << "{" <<misc::separate(e.fields_get(), ", ") << "}";
+    ostr_ << e.type_name_get() << "{" << misc::separate(e.fields_get(), ", ")
+          << "}";
   }
 
   void PrettyPrinter::operator()(const SeqExp& e)
   {
     // FIXED: Some code was deleted here.
-    ostr_ << "(" << misc::separate(e.exps_get(), ", ") << ")";
+
+    //if (e.exps_get().size() > 1)
+    ostr_ << "(" << misc::separate(e.exps_get(), ";") << misc::iendl << ")";
+
+    //ostr_ << e.exps_get().size();
+  }
+
+  void PrettyPrinter::operator()(const NameTy& e)
+  {
+    // FIXED: Some code was deleted here.
+    ostr_ << e.name_get();
   }
 
   void PrettyPrinter::operator()(const AssignExp& e)
@@ -78,12 +94,11 @@ namespace ast
     ostr_ << e.var_get() << " := " << e.exp_get();
   }
 
-
   void PrettyPrinter::operator()(const IfExp& e)
   {
     // FIXED: Some code was deleted here.
-    ostr_ << "if " << e.test_get() << misc::incendl << "then " << e.thenclause_get();
-
+    ostr_ << "if " << e.test_get() << misc::incendl << "then "
+          << e.thenclause_get() << misc::iendl << "else " << e.elseclause_get();
   }
 
   void PrettyPrinter::operator()(const WhileExp& e)
@@ -93,21 +108,21 @@ namespace ast
 
   void PrettyPrinter::operator()(const ForExp& e)
   {
-    ostr_ << "for " << e.vardec_get().name_get() << " := " << e.vardec_get().init_get() 
-    << " to " << e.hi_get() << " do " << misc::incendl << e.body_get();
+    ostr_ << "for " << e.vardec_get().name_get()
+          << " := " << e.vardec_get().init_get() << " to " << e.hi_get()
+          << " do " << misc::incendl << e.body_get();
   }
-
 
   void PrettyPrinter::operator()(const LetExp& e)
   {
-    ostr_ << "let" << misc::incendl << e.chunks_get() << misc::decindent << "in" << misc::decindent
-    << e.body_get() << misc::decendl << "end";
+    ostr_ << misc::incendl << "let" << misc::iendl << e.chunks_get() << "in"
+          << misc::iendl << e.body_get() << "end";
   }
 
   void PrettyPrinter::operator()(const ArrayExp& e)
   {
-  
-    ostr_ << e.type_name_get() << "[" << e.size_get() << "] of " << e.init_get();
+    ostr_ << e.type_name_get() << "[" << e.size_get() << "] of "
+          << e.init_get();
   }
 
   void PrettyPrinter::operator()(const FieldInit& e)
@@ -122,22 +137,19 @@ namespace ast
       chunks->accept(*this);
   }
 
-  void PrettyPrinter::operator()(const ChunkInterface& e)
-  {
-    e.accept(*this);
-  }
+  void PrettyPrinter::operator()(const ChunkInterface& e) { e.accept(*this); }
 
   void PrettyPrinter::operator()(const VarChunk& e)
   {
-    chunk_visit<VarChunk>(e);
+    ostr_ << misc::separate(e, ", ");
   }
 
   void PrettyPrinter::operator()(const VarDec& e)
   {
     // `type_name' might be omitted.
-    this->accept(e.type_name_get());
+    ostr_ << e.name_get() << ": ";
     // `init' can be null in case of formal parameter.
-    this->accept(e.init_get());
+    ostr_ << *e.type_name_get();
   }
 
   void PrettyPrinter::operator()(const FunctionChunk& e)
@@ -148,9 +160,17 @@ namespace ast
   void PrettyPrinter::operator()(const FunctionDec& e)
   {
     // FIXED: Some code was deleted here.
-    e.formals_get().accept(*this);
-    e.result_get()->accept(*this);
-    e.body_get()->accept(*this);
+    ostr_ << misc::iendl;
+    ostr_ << "function " << e.name_get() << "(";
+    ostr_ << misc::separate(e.formals_get().decs_get(), ", ");
+    ostr_ << ")";
+    if (e.result_get() != nullptr)
+      {
+        ostr_ << " : ";
+        ostr_ << *e.result_get();
+      }
+    ostr_ << " = " << misc::incendl;
+    ostr_ << *e.body_get();
   }
 
   void PrettyPrinter::operator()(const TypeChunk& e)
@@ -158,11 +178,7 @@ namespace ast
     chunk_visit<TypeChunk>(e);
   }
 
-  void PrettyPrinter::operator()(const TypeDec& e)
-  {
-    e.ty_get().accept(*this);
-  }
-
+  void PrettyPrinter::operator()(const TypeDec& e) { e.ty_get().accept(*this); }
 
   void PrettyPrinter::operator()(const RecordTy& e)
   {
@@ -180,10 +196,6 @@ namespace ast
   {
     e.type_name_get().accept(*this);
   }
-
-
-  
-
 
   // FIXME: Some code was deleted here.
 } // namespace ast

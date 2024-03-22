@@ -178,7 +178,7 @@
        VAR          "var"
        WHILE        "while"
        EOF 0        "end of file"
-       EXP "_exp";
+       EXP          "_exp";
 
 // FIXED: Some code was deleted here (Priorities/associativities).
 %precedence THEN
@@ -209,8 +209,9 @@
 %type <ast::exps_type*>       exps exps.1 funcall funcall.1
 %type <ast::FunctionChunk*>   funchunk
 %type <ast::Var*>             lvalue
-%type <ast::VarDec*>          vardec
-%type <ast::VarChunk*>        varchunk
+%type <ast::VarDec*>          vardec tyvardec
+%type <ast::VarChunk*>        varchunk tyvarchunks tyvarchunks.1
+
 %type <ast::FunctionDec*>     fundec
 %type <ast::FieldInit*>       rec.2 
 %type <ast::fieldinits_type*> rec rec.1   
@@ -378,7 +379,7 @@ chunks:
 | funchunk chunks         { $$ = $2; $$->push_front($1);}//
 | varchunk chunks         { $$ = $2; $$->push_front($1); }
 /* A list of chunk metavariable */
-//| CHUNKS "(" INT ")" chunks { $$ = metavar<ast::ChunkList>(td, $3); $$->push_front($5->list)}
+| CHUNKS "(" INT ")" chunks { $$ = metavar<ast::ChunkList>(td, $3); $$->splice_front(*$5);}
   // FIXME: Some code was deleted here (More rules).
 ;
 funchunk:
@@ -387,14 +388,23 @@ funchunk:
 ;  
 
 fundec:
-  "function" ID "(" tyfields ")" "=" exp 
-  {$$ = make_FunctionDec(@$, $2, make_VarChunk(@4), nullptr,  $7); }
-  | "function" ID "(" tyfields ")" typeid "=" exp 
-   { $$ = make_FunctionDec(@$, $2, make_VarChunk(@4), $6,  $8); }
-  | "primitive" ID "(" tyfields ")"
-  { $$ = make_FunctionDec(@$, $2, make_VarChunk(@4), nullptr, nullptr); }
-  | "primitive" ID "(" tyfields ")" typeid
-   { $$ = make_FunctionDec(@$, $2, make_VarChunk(@4), $6, nullptr); }
+  "function" ID "(" tyvarchunks ")" "=" exp 
+  {
+    // tyfields = vecteur de fields : misc::symbol name_, NameTy* type_name_;
+    // VarChunk = vecteur de Vardec
+    // Vardec = NameTy* type_name_, Exp* init_;
+
+    $$ = make_FunctionDec(@$, $2, $4, nullptr,  $7); }
+  
+  
+  
+  
+  | "function" ID "(" tyvarchunks ")" ":" typeid "=" exp 
+   { $$ = make_FunctionDec(@$, $2, $4, $7,  $9); }
+  | "primitive" ID "(" tyvarchunks ")"
+  { $$ = make_FunctionDec(@$, $2, $4, nullptr, nullptr); }
+  | "primitive" ID "(" tyvarchunks ")" ":" typeid
+   { $$ = make_FunctionDec(@$, $2, $4, $7, nullptr); }
   ;
 
 varchunk:
@@ -440,6 +450,21 @@ tyfields.1:
 tyfield:
   ID ":" typeid     { $$ = make_Field(@$, $1, $3); }
 ;
+
+
+tyvarchunks:
+  %empty               { $$ = make_VarChunk(@$); }
+| tyvarchunks.1           { $$ = $1; }
+;
+
+tyvarchunks.1:
+  tyvarchunks.1 "," tyvardec { $$ = $1; $$->emplace_back(*$3); }
+| tyvardec            { $$ = make_VarChunk(@$); $$->emplace_back(*$1);}
+;
+
+tyvardec:
+  ID ":" typeid    {$$ = make_VarDec(@$, $1, $3, nullptr);}
+
 
 //ext:
 //  %empty
