@@ -59,13 +59,12 @@
 
 %}
 
-%x SC_COMMENT SC_STRING
+%x SC_COMMENT SC_STRING SC_SINGLE_COMMENT
 
 /* Abbreviations.  */
 int             [0-9]+
 num             [0-7]{3}
 xnum            [0-9A-Fa-f]{2}
-string          "\""([^\\]|\\.)*"\""
 
 /* FIXED: Some code was deleted here. */
 id              [a-zA-Z][_a-zA-Z0-9]*
@@ -89,7 +88,6 @@ id_main         "_main"
               }
   /* FIXED: Some code was deleted here. */
 
-[\n\r(\n\r)(\r\n)]     {td.location_.lines(yyleng);}
 "&"           {return TOKEN(AND);}
 "array"       {return TOKEN(ARRAY);}
 ":="          {return TOKEN(ASSIGN);}
@@ -138,18 +136,49 @@ id_main         "_main"
 "var"         {return TOKEN(VAR);}
 "while"       {return TOKEN(WHILE);}
 
-{id}     {return TOKEN_VAL(ID, text());}
-"\""      {start(SC_STRING);}
-
+{id}|{id_main}     {return TOKEN_VAL(ID, text());}
+"\""     {start(SC_STRING);}
+"//"      {start(SC_SINGLE_COMMENT);} 
 
 // STRING
 
 
 <SC_STRING>{
-[\n\r(\n\r)(\r\n)]  {td.error_ << td.location_ << ": " << misc::error::error_type::scan  << "Unexpected \\n found\n"; start(INITIAL);}
-"\""      {return TOKEN_VAL(STRING,actu);}
+
+[\a\b\f\n\r\t\v]     {actu = actu.append((text()));}
+
+\\[0-7]{3} { std::string res = text(); res.erase(0,1); int num = stoi(res,0,8); 
+if (num >  255) 
+{
+  td.error_ << td.location_ << ": " << misc::error::error_type::scan << "Wrong number in octal\n"  ; 
+} 
+else { 
+  char asc = num;
+  std::string res(1,asc);
+  actu = actu.append((res));
+}; 
+}
+
+\\x[0-9A-Fa-f]{2} {std::string res = text(); res.erase(0,2); int num = stoi(res,0,16); std::cout << num<<"\n";
+if (num >  255) 
+{
+  td.error_ << td.location_ << ": " << misc::error::error_type::scan << "Wrong number in hexa\n"  ; 
+} 
+else { 
+  char asc = num;
+  std::string res(1,asc);
+  actu = actu.append((res));
+}; 
+}
+
+\\\\ { actu = actu.append(text());}
+
+"\""      { std::string res ; res = actu ; actu = ""; start(INITIAL);return TOKEN_VAL(STRING,res);}
+
+
+\\. {td.error_ << td.location_ << ": " << misc::error::error_type::scan << "Unexpected backslash found\n"  ; }
 . { actu = actu.append(text());}
-<<EOF>> { td.error_ << td.location_ << ": " << misc::error::error_type::scan << "Unexpected EOF found\n" ; start(INITIAL); }
+<<EOF>> { td.error_ << td.location_ << ": " << misc::error::error_type::scan << "Unexpected EOF found\n"  ; start(INITIAL); }
 }
 
 // COMMENT
@@ -170,5 +199,21 @@ id_main         "_main"
 . {}
 <<EOF>> {  td.error_ << td.location_ << ": "  << misc::error::error_type::scan << "Unexpected EOF found\n" ; start(INITIAL); }
 }
+
+// SINGLE_COMMENT
+
+<SC_SINGLE_COMMENT>{
+"//" { start(INITIAL);}
+. {}
+\n|\r|\n\r|\r\n     {td.error_ << td.location_ << ": "  << misc::error::error_type::scan << "Unexpected newline found\n" ; start(INITIAL);}
+<<EOF>> {  td.error_ << td.location_ << ": "  << misc::error::error_type::scan << "Unexpected EOF found\n" ; start(INITIAL); }
+}
+
+
+[ \t] {}
+\n|\r|\n\r|\r\n     {td.location_.lines(yyleng);}
+"_exp"        {return TOKEN(EXP);}
+. {  td.error_ << td.location_ << ": "  << misc::error::error_type::scan << "Unexpected " << text() << " found\n" ; start(INITIAL); }
+
 <<EOF>>    { return TOKEN(EOF);}
 %%

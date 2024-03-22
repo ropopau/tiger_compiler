@@ -245,7 +245,7 @@ program:
 
 exps: 
   %empty { $$ = make_exps_type(); }
-  | exps.1  { $$ = $1; }    
+  | exps.1  {$$ = $1; }    
   ;
 
 exps.1:
@@ -312,7 +312,7 @@ exp:
   | "for" ID ":=" exp "to" exp "do" exp 
    { $$ = make_ForExp(@$, make_VarDec(@$, $2, nullptr, $4), $6, $8); }
   | "break" { $$ = make_BreakExp(@$); }
-  | "let" chunks "in" exp "end" { $$ = make_LetExp(@$, $2, $4); }
+  | "let" chunks "in" exps "end" {$$ = make_LetExp(@$, $2, make_SeqExp(@$, $4)); }
   
   /* object-oriented */
   //| "new" typeid    {}
@@ -320,7 +320,7 @@ exp:
   /* Cast of an expression  to a given type */
   | CAST "(" exp "," ty ")" { $$ = make_CastExp(@$, $3, $5); }
   /* An expression metavariable */
-  | EXP "(" INT ")" { $$ = metavar<ast::Exp>(td, $3); }
+  | EXP "(" INT ")" {$$ = metavar<ast::Exp>(td, $3);}
   ;
 %token LVALUE "_lvalue";
 
@@ -329,17 +329,17 @@ lvalue:
   | lvalue "." ID {$$ = make_FieldVar(@$, $1, $3);}
   | lvalue "[" exp "]" {$$ = make_SubscriptVar(@$, $1, $3);}
   /* A l-value metavariable */
-  //| LVALUE "(" INT ")"
+  | LVALUE "(" INT ")" {$$ = metavar<ast::Var>(td, $3);}
   ;
 
 funcall:
-  %empty               { $$ = make_exps_type(); }
+  %empty               {$$ = make_exps_type(); }
 | funcall.1           { $$ = $1; }
 ;
 
 funcall.1:
   funcall.1 "," funcall.2 { $$ = $1; $$->emplace_back($3); }
-| funcall.2                { $$ = make_exps_type($1); }
+| funcall.2                { $$ = make_exps_type(); $$->emplace_back($1);}
 ;
 funcall.2:
   exp     { $$ = $1; }
@@ -373,12 +373,12 @@ chunks:
             ..
         end
      which is why we end the recursion with a %empty. */
-  %empty                  { $$ = make_ChunkList(@$); }
+  %empty                  {$$ = make_ChunkList(@$); }
 | tychunk chunks        { $$ = $2; $$->push_front($1);}
 | funchunk chunks         { $$ = $2; $$->push_front($1);}//
 | varchunk chunks         { $$ = $2; $$->push_front($1); }
 /* A list of chunk metavariable */
-//| CHUNKS "(" INT ")" chunks { $$ = metavar<ast::ChunkList>(td, $3); $$->push_front($5)}
+//| CHUNKS "(" INT ")" chunks { $$ = metavar<ast::ChunkList>(td, $3); $$->push_front($5->list)}
   // FIXME: Some code was deleted here (More rules).
 ;
 funchunk:
@@ -388,17 +388,13 @@ funchunk:
 
 fundec:
   "function" ID "(" tyfields ")" "=" exp 
-  // { $$ = make_FunctionDec(@$, $2,make_VarChunk(@$), $4,  $7); }
-  { $$ = make_FunctionDec(@$, $2, nullptr, nullptr,  $7); }
+  {$$ = make_FunctionDec(@$, $2, make_VarChunk(@4), nullptr,  $7); }
   | "function" ID "(" tyfields ")" typeid "=" exp 
-  // { $$ = make_FunctionDec(@$, $2, $4, $6, $8); }
-   { $$ = make_FunctionDec(@$, $2, nullptr, nullptr, $8); }
-  | "primitive" ID "(" tyfields ")" 
-  // { $$ = make_FunctionDec(@$, $2, nullptr, $4, nullptr); }
-  { $$ = make_FunctionDec(@$, $2, nullptr, nullptr, nullptr); }
+   { $$ = make_FunctionDec(@$, $2, make_VarChunk(@4), $6,  $8); }
+  | "primitive" ID "(" tyfields ")"
+  { $$ = make_FunctionDec(@$, $2, make_VarChunk(@4), nullptr, nullptr); }
   | "primitive" ID "(" tyfields ")" typeid
-  //  { $$ = make_FunctionDec(@$, $2, $4, $6, nullptr); }
-   { $$ = make_FunctionDec(@$, $2, nullptr, nullptr, nullptr); }
+   { $$ = make_FunctionDec(@$, $2, make_VarChunk(@4), $6, nullptr); }
   ;
 
 varchunk:
