@@ -144,7 +144,13 @@ id_main         "_main"
 
 
 <SC_STRING>{
-
+\\a {actu = actu.append(text());}
+\\b {actu = actu.append(text());}
+\\f {actu = actu.append(text());}
+\\n {actu = actu.append(text());}
+\\r {actu = actu.append(text());}
+\\t {actu = actu.append(text());}
+\\v {actu = actu.append(text());}
 [\a\b\f\n\r\t\v]     {actu = actu.append((text()));}
 
 \\[0-7]{3} { std::string res = text(); res.erase(0,1); int num = stoi(res,0,8); 
@@ -159,7 +165,7 @@ else {
 }; 
 }
 
-\\x[0-9A-Fa-f]{2} {std::string res = text(); res.erase(0,2); int num = stoi(res,0,16); std::cout << num<<"\n";
+\\x[0-9A-Fa-f]{2} {std::string res = text(); res.erase(0,2); int num = stoi(res,0,16); 
 if (num >  255) 
 {
   td.error_ << td.location_ << ": " << misc::error::error_type::scan << "Wrong number in hexa\n"  ; 
@@ -170,14 +176,15 @@ else {
   actu = actu.append((res));
 }; 
 }
+['"'] { std::string res ; res = actu ; actu = ""; start(INITIAL);return TOKEN_VAL(STRING,res);}
+
+\\\" {actu = actu.append("\\");actu = actu.append("\""); }
 
 \\\\ { actu = actu.append(text());}
 
-"\""      { std::string res ; res = actu ; actu = ""; start(INITIAL);return TOKEN_VAL(STRING,res);}
 
-
-\\. {td.error_ << td.location_ << ": " << misc::error::error_type::scan << "Unexpected backslash found\n"  ; }
 . { actu = actu.append(text());}
+\\. {td.error_ << td.location_ << ": " << misc::error::error_type::scan << "Unexpected backslash found\n"  ; }
 <<EOF>> { td.error_ << td.location_ << ": " << misc::error::error_type::scan << "Unexpected EOF found\n"  ; start(INITIAL); }
 }
 
