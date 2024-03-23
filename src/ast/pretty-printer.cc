@@ -93,10 +93,28 @@ namespace ast
   {
     // FIXED: Some code was deleted here.
 
-    //if (e.exps_get().size() > 1)
-    ostr_ << "(" << misc::separate(e.exps_get(), ";") << misc::iendl << ")";
-
-    //ostr_ << e.exps_get().size();
+    // if (e.exps_get().size() > 1)
+    // ostr_ << "(" << misc::separate(e.exps_get(), ";") << misc::iendl << ")";
+    auto& exps = e.exps_get();
+    for (size_t i = 0; i < exps.size(); ++i)
+      {
+        if (i != 0)
+          {
+            if (i == exps.size() - 1 || exps.size() - 1 == 0)
+              ostr_ << ";" << misc::iendl << "()";
+            else
+              ostr_ << ";" << misc::iendl;
+          }
+        else
+          ostr_ << "(" << misc::incendl;
+        // ostr_ << *exps.at(i);
+        (i != exps.size() - 1) ? (ostr_ << *exps.at(i))
+                               : (ostr_ << *exps.at(exps.size() - 1)
+                                        << misc::resetindent << misc::incendl);
+        if (i == exps.size() - 1)
+          ostr_ << ")";
+      }
+    // ostr_ << e.exps_get().size();
   }
 
   void PrettyPrinter::operator()(const StringExp& e)
@@ -120,7 +138,16 @@ namespace ast
   {
     // FIXED: Some code was deleted here.
     ostr_ << "if " << e.test_get() << misc::incendl << "then "
-          << e.thenclause_get() << misc::iendl << "else " << e.elseclause_get();
+          << e.thenclause_get();
+
+    auto a = &e.elseclause_get();
+
+    auto c = const_cast<ast::Exp*>(a);
+
+    auto ok = dynamic_cast<ast::SeqExp*>(c);
+
+    if (ok == nullptr)
+      ostr_ << misc::iendl << "else " << e.elseclause_get();
   }
 
   void PrettyPrinter::operator()(const WhileExp& e)

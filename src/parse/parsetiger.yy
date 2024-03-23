@@ -291,6 +291,7 @@ exp:
   | ID "(" funcall ")"  {$$ = make_CallExp(@$, $1, $3);}
   /* Operations. */
   | "-" exp { $$ = make_OpExp(@$, make_IntExp(@$, 0), ast::OpExp::Oper::sub, $2); }
+  | exp "=" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::eq, $3); }
   | exp "+" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::add, $3); }
   | exp "-" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::sub, $3); }
   | exp "*" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::mul, $3); }
