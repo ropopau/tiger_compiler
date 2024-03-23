@@ -82,6 +82,11 @@ namespace ast
     //ostr_ << e.exps_get().size();
   }
 
+  void PrettyPrinter::operator()(const StringExp& e)
+  {
+    ostr_ << "\"" << e.value_get() << "\"";
+  }
+
   void PrettyPrinter::operator()(const NameTy& e)
   {
     // FIXED: Some code was deleted here.
