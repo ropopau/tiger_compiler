@@ -19,6 +19,7 @@
 #include <ast/chunk-list.hh>
 #include <ast/class-ty.hh>
 #include <ast/dec.hh>
+#include <ast/escapable.hh>
 #include <ast/exp.hh>
 #include <ast/field-init.hh>
 #include <ast/field-var.hh>

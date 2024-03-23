@@ -6,13 +6,16 @@
 #pragma once
 
 #include <ast/dec.hh>
+#include <ast/escapable.hh>
 #include <ast/exp.hh>
 #include <ast/name-ty.hh>
 
 namespace ast
 {
   /// VarDec.
-  class VarDec : public Dec
+  class VarDec
+    : public Dec
+    , public Escapable
   {
   public:
     /** \name Ctor & dtor.

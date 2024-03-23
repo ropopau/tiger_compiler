@@ -23,6 +23,7 @@ namespace ast
   class ChunkList;
   class ClassTy;
   class Dec;
+  class Escapable;
   class Exp;
   class Field;
   class FieldInit;

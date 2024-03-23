@@ -23,4 +23,6 @@ namespace object::tasks
                object_parse,
                "object parse");
 
+  // FIXME: Some code was deleted here.
+
 } // namespace object::tasks

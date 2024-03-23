@@ -64,7 +64,9 @@ namespace ast
   void DumperDot::operator()(const BreakExp& e)
   {
     unsigned long old_parent_id = node_html_header(e, "BreakExp");
+    node_html_ports({"def"});
     footer_and_link(old_parent_id);
+    dump_def(e);
     parent_id = old_parent_id;
   }
 
@@ -74,7 +76,9 @@ namespace ast
     // FIXME: Some code was deleted here (node_html_field).
     node_html_ports();
     // FIXME: Some code was deleted here (node_html_port_list for each list).
+    node_html_one_port("def");
     footer_and_link(old_parent_id);
+    dump_def(e);
     // FIXME: Some code was deleted here (dump_list).
     parent_id = old_parent_id;
   }
@@ -184,7 +188,9 @@ namespace ast
     // FIXME: Some code was deleted here (node_html_field).
     // FIXME: Some code was deleted here (node_html_ports with properties).
     // FIXME: Some code was deleted here (node_html_port_list for each list).
+    node_html_one_port("def");
     footer_and_link(old_parent_id);
+    dump_def(e);
     // FIXME: Some code was deleted here (dump and dump_list).
     parent_id = old_parent_id;
   }
@@ -205,7 +211,9 @@ namespace ast
   {
     unsigned long old_parent_id = node_html_header(e, "NameTy");
     node_html_field("name", e.name_get());
+    node_html_ports({"def"});
     footer_and_link(old_parent_id);
+    dump_def(e);
     parent_id = old_parent_id;
   }
 
@@ -270,7 +278,9 @@ namespace ast
   {
     unsigned long old_parent_id = node_html_header(e, "SimpleVar");
     node_html_field("name", e.name_get());
+    node_html_ports({"def"});
     footer_and_link(old_parent_id);
+    dump_def(e);
     parent_id = old_parent_id;
   }
 

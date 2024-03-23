@@ -193,10 +193,34 @@ class TiExecutor:
             return self.throw_error(e)
         return self.data.ast
 
+    @wrap_step(["bind"], "parse")
+    def bind(self) -> Optional[tc.ast.ChunkList]:
+        try:
+            if self.object_enabled and tc.has("object"):
+                tc.object.bind(self.data.ast).exit_on_error()
+            else:
+                tc.bind.bind(self.data.ast).exit_on_error()
+        except Exception as e:
+            return self.throw_error(e)
+        return self.data.ast
+
+    @wrap_step([], "bind")
+    def rename(self) -> Optional[tc.ast.ChunkList]:
+        if (
+            self.rename_enabled
+            and tc.has("bind")
+            and not self.object_enabled
+            and not tc.has("object")
+        ):
+            tc.bind.rename(self.data.ast)
+        return self.data.ast
+
     def frontend_run(self) -> None:
         """Run parse, bind and type depending of TC step"""
         self.parse()
 
+        self.bind()
+        self.rename()
         return None
 
     def backend_exec(self) -> Optional[str]:

@@ -32,6 +32,8 @@ try_import(
         "parse",
         "object",
         "ast",
+        "bind",
+        "escapes",
     ],
 )
 

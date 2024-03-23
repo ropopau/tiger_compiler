@@ -206,6 +206,7 @@
 }
 
 // Types.
+%include "ast/escapable.hh"
 
 %include "ast/field.hh"
 %include "ast/field-init.hh"
