@@ -14,12 +14,40 @@
 
 #include <map>
 #include <vector>
+#include <stack>
+
+
+
 
 namespace misc
 {
+
+
+  template <typename Key, typename Data>
+  concept IsPointer = std::is_pointer<Data>::value;
+
+
+
   template <typename Key, typename Data> class scoped_map
   {
-    // FIXME: Some code was deleted here.
+    // FIXED
+    public:
+      
+      void put(const Key& key, const Data& value);
+
+      Data get(const Key& key) const requires (!IsPointer<Key,Data>);
+
+      Data get(const Key& key) const requires IsPointer<Key,Data>;
+
+      std::ostream& dump(std::ostream& ostr) const;
+
+      void scope_begin();
+
+      void scope_end();
+
+
+    private:
+      std::stack<std::map<Key,Data>> stack_;
   };
 
   template <typename Key, typename Data>
@@ -27,6 +55,9 @@ namespace misc
                            const scoped_map<Key, Data>& tbl);
 
   // FIXME: Some code was deleted here.
+
+
+
 
 } // namespace misc
 

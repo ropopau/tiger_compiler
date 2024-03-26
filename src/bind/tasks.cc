@@ -4,3 +4,24 @@
  */
 
 // FIXME: Some code was deleted here.
+
+
+#include <ostream>
+
+#include <ast/libast.hh>
+#include <ast/tasks.hh>
+#include <bind/libbind.hh>
+#define DEFINE_TASKS 1
+#include <bind/tasks.hh>
+#undef DEFINE_TASKS
+#include <misc/xalloc.hh>
+
+namespace bind::tasks
+{
+    void bind_compute(){}
+
+    void bind_display(){}
+
+    void bind_bound(){}
+
+}
