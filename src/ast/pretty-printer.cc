@@ -15,16 +15,6 @@ namespace ast
   // Anonymous namespace: these functions are private to this file.
   namespace
   {
-    /// Output \a e on \a ostr.
-    inline std::ostream& operator<<(std::ostream& ostr, const Escapable& e)
-    {
-      if (escapes_display(ostr)
-          // FIXME: Some code was deleted here.
-      )
-        ostr << "/* escaping */ ";
-
-      return ostr;
-    }
 
     /// \brief Output \a e on \a ostr.
     ///
@@ -33,8 +23,6 @@ namespace ast
     inline std::ostream& operator<<(std::ostream& ostr, const Dec& e)
     {
       ostr << e.name_get();
-      if (bindings_display(ostr))
-        ostr << " /* " << &e << " */";
       return ostr;
     }
   } // namespace
@@ -43,12 +31,7 @@ namespace ast
     : ostr_(ostr)
   {}
 
-  void PrettyPrinter::operator()(const SimpleVar& e)
-  {
-    ostr_ << e.name_get();
-    if (bindings_display(ostr_))
-      ostr_ << " /* " << e.def_get() << " */";
-  }
+  void PrettyPrinter::operator()(const SimpleVar& e) { ostr_ << e.name_get(); }
 
   void PrettyPrinter::operator()(const FieldVar& e)
   {
@@ -210,16 +193,30 @@ namespace ast
   {
     // FIXED: Some code was deleted here.
     ostr_ << misc::iendl;
-    ostr_ << "function " << e.name_get() << "(";
-    ostr_ << misc::separate(e.formals_get().decs_get(), ", ");
-    ostr_ << ")";
-    if (e.result_get() != nullptr)
+    if (e.body_get())
       {
-        ostr_ << " : ";
-        ostr_ << *e.result_get();
+        ostr_ << "function " << e.name_get() << "(";
+        ostr_ << misc::separate(e.formals_get().decs_get(), ", ");
+        ostr_ << ")";
+        if (e.result_get() != nullptr)
+          {
+            ostr_ << " : ";
+            ostr_ << *e.result_get();
+          }
+        ostr_ << " = " << misc::incendl;
+        ostr_ << *e.body_get();
       }
-    ostr_ << " = " << misc::incendl;
-    ostr_ << *e.body_get();
+    else
+      {
+        ostr_ << "primitive " << e.name_get() << "(";
+        ostr_ << misc::separate(e.formals_get().decs_get(), ", ");
+        ostr_ << ")";
+        if (e.result_get() != nullptr)
+          {
+            ostr_ << " : ";
+            ostr_ << *e.result_get();
+          }
+      }
   }
 
   void PrettyPrinter::operator()(const TypeChunk& e)

@@ -12,7 +12,7 @@ namespace ast
 {
 
   template <typename Container>
-    requires misc::ConstIterable<Container>
+  requires misc::ConstIterable<Container>
   inline void DumperDot::dump_list(const std::string& field, const Container& l)
   {
     const std::string* old_parent_field = parent_field;

@@ -301,8 +301,14 @@ exp:
   | exp "<>" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::ne, $3); }
   | exp ">" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::gt, $3); }
   | exp "<" exp { $$ = make_OpExp(@$, $1, ast::OpExp::Oper::lt, $3); }
-  | exp "&" exp  //{$$ = make_IntExp(@$, $1 & $3);}
-  | exp "|" exp  //{$$ = make_IntExp(@$, $1 | $3);}
+  
+  
+  | exp "&" exp  {$$ = td.enable_extensions().parse(
+                  Tweast() << "(if " << $1 << " then( if " << $3 << " then(1)) else (0))");}
+                    
+
+  | exp "|" exp  {$$ = td.enable_extensions().parse(
+                  Tweast() << "(if " << $1 << " then(1)  else (if " << $3 << " then (1) 0))");}
   | "(" exps ")" { $$ = make_SeqExp(@$, $2); }
   /* Assignment. */
   | lvalue ":=" exp {$$ = make_AssignExp(@$, $1, $3);}
@@ -380,7 +386,7 @@ chunks:
 | funchunk chunks         { $$ = $2; $$->push_front($1);}//
 | varchunk chunks         { $$ = $2; $$->push_front($1); }
 /* A list of chunk metavariable */
-| CHUNKS "(" INT ")" chunks { $$ = metavar<ast::ChunkList>(td, $3); $$->splice_front(*$5);}
+| CHUNKS "(" INT ")" chunks { $$ = metavar<ast::ChunkList>(td, $3); $$->splice_back(*$5);}
   // FIXME: Some code was deleted here (More rules).
 ;
 funchunk:
@@ -390,19 +396,11 @@ funchunk:
 
 fundec:
   "function" ID "(" tyvarchunks ")" "=" exp 
-  {
-    // tyfields = vecteur de fields : misc::symbol name_, NameTy* type_name_;
-    // VarChunk = vecteur de Vardec
-    // Vardec = NameTy* type_name_, Exp* init_;
-
-    $$ = make_FunctionDec(@$, $2, $4, nullptr,  $7); }
-  
-  
-  
-  
+  { $$ = make_FunctionDec(@$, $2, $4, nullptr,  $7); }
   | "function" ID "(" tyvarchunks ")" ":" typeid "=" exp 
    { $$ = make_FunctionDec(@$, $2, $4, $7,  $9); }
   | "primitive" ID "(" tyvarchunks ")"
+  
   { $$ = make_FunctionDec(@$, $2, $4, nullptr, nullptr); }
   | "primitive" ID "(" tyvarchunks ")" ":" typeid
    { $$ = make_FunctionDec(@$, $2, $4, $7, nullptr); }

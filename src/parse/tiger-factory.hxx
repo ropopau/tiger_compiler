@@ -11,23 +11,23 @@ namespace parse
   inline ast::StringExp* make_StringExp(const location& location,
                                         std::string string)
   {
+    // FIXED: Some code was deleted here (Constructor of StringExp).
     return new ast::StringExp(location, string);
-    // FIXME: Some code was deleted here (Constructor of StringExp).
   }
 
   inline ast::ObjectExp* make_ObjectExp(const location& location,
                                         ast::NameTy* type_name)
   {
+    // FIXED: Some code was deleted here (Constructor of Object).
     return new ast::ObjectExp(location, type_name);
-    // FIXME: Some code was deleted here (Constructor of Object).
   }
 
   inline ast::CallExp* make_CallExp(const location& location,
                                     misc::symbol name,
                                     ast::exps_type* args)
   {
+    // FIXED: Some code was deleted here (Constructor of CallExp).
     return new ast::CallExp(location, name, args);
-    // FIXME: Some code was deleted here (Constructor of CallExp).
   }
 
   inline ast::MethodCallExp* make_MethodCallExp(const location& location,
@@ -35,8 +35,8 @@ namespace parse
                                                 ast::exps_type* args,
                                                 ast::Var* object)
   {
+    // FIXED: Some code was deleted here (Constructor of MethodCallExp).
     return new ast::MethodCallExp(location, name, args, object);
-    // FIXME: Some code was deleted here (Constructor of MethodCallExp).
   }
 
   inline ast::RecordExp* make_RecordExp(const location& location,
@@ -44,7 +44,7 @@ namespace parse
                                         ast::fieldinits_type* fields)
   {
     return new ast::RecordExp(location, type_name, fields);
-    // FIXME: Some code was deleted here (Constructor of RecordExp).
+    // FIXED: Some code was deleted here (Constructor of RecordExp).
   }
 
   inline ast::ArrayExp* make_ArrayExp(const location& location,
@@ -53,7 +53,7 @@ namespace parse
                                       ast::Exp* init)
   {
     return new ast::ArrayExp(location, type_name, size, init);
-    // FIXME: Some code was deleted here (Constructor of ArrayExp).
+    // FIXED: Some code was deleted here (Constructor of ArrayExp).
   }
 
   inline ast::NilExp* make_NilExp(const location& location)
@@ -65,14 +65,14 @@ namespace parse
                                   ast::exps_type* exps)
   {
     return new ast::SeqExp(location, exps);
-    // FIXME: Some code was deleted here (Constructor of SeqExp).
+    // FIXED: Some code was deleted here (Constructor of SeqExp).
   }
 
   inline ast::AssignExp*
   make_AssignExp(const location& location, ast::Var* var, ast::Exp* exp)
   {
     return new ast::AssignExp(location, var, exp);
-    // FIXME: Some code was deleted here (Constructor of AssignExp).
+    // FIXED: Some code was deleted here (Constructor of AssignExp).
   }
 
   inline ast::IfExp* make_IfExp(const location& location,
@@ -81,14 +81,14 @@ namespace parse
                                 ast::Exp* elseclause)
   {
     return new ast::IfExp(location, test, thenclause, elseclause);
-    // FIXME: Some code was deleted here (Constructor of IfExp).
+    // FIXED: Some code was deleted here (Constructor of IfExp).
   }
 
   inline ast::IfExp*
   make_IfExp(const location& location, ast::Exp* test, ast::Exp* thenclause)
   {
     return new ast::IfExp(location, test, thenclause);
-    // FIXME: Some code was deleted here (Constructor of IfExp).
+    // FIXED: Some code was deleted here (Constructor of IfExp).
   }
 
   inline ast::WhileExp*
@@ -107,16 +107,15 @@ namespace parse
 
   inline ast::BreakExp* make_BreakExp(const location& location)
   {
-    
     return new ast::BreakExp(location);
-    // FIXME: Some code was deleted here (Constructor of BreakExp).
+    // FIXED: Some code was deleted here (Constructor of BreakExp).
   }
 
   inline ast::LetExp*
   make_LetExp(const location& location, ast::ChunkList* decs, ast::Exp* body)
   {
     return new ast::LetExp(location, decs, body);
-    // FIXME: Some code was deleted here (Constructor of LetExp).
+    // FIXED: Some code was deleted here (Constructor of LetExp).
   }
 
   inline ast::OpExp* make_OpExp(const location& location,
@@ -143,7 +142,7 @@ namespace parse
   make_FieldVar(const location& location, ast::Var* var, misc::symbol name)
   {
     return new ast::FieldVar(location, var, name);
-    // FIXME: Some code was deleted here (Constructor of FieldVar).
+    // FIXED: Some code was deleted here (Constructor of FieldVar).
   }
 
   inline ast::SubscriptVar*
@@ -178,7 +177,7 @@ namespace parse
                                       ast::fields_type* fields)
   {
     return new ast::RecordTy(location, fields);
-    // FIXME: Some code was deleted here (Constructor of RecordTy).
+    // FIXED: Some code was deleted here (Constructor of RecordTy).
   }
 
   inline ast::ArrayTy* make_ArrayTy(const location& location,

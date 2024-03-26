@@ -221,6 +221,7 @@ else {
 \n|\r|\n\r|\r\n     {td.location_.lines(yyleng);}
 "_exp"        {return TOKEN(EXP);}
 "_lvalue"        {return TOKEN(LVALUE);}
+"_chunks"        {return TOKEN(CHUNKS);}
 . {  td.error_ << td.location_ << ": "  << misc::error::error_type::scan << "Unexpected " << text() << " found\n" ; start(INITIAL); }
 
 <<EOF>>    { return TOKEN(EOF);}

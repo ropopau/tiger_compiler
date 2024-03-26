@@ -37,7 +37,6 @@ namespace parse::tasks
     if (!result.first)
       task_error().exit();
 
-    
     // FIXED: Some code was deleted here (Set `the_program' to the result of parsing).
     auto a = result.first;
 

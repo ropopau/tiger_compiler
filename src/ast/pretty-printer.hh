@@ -30,11 +30,9 @@ namespace ast
     void operator()(const SubscriptVar& e) override;
     void operator()(const CastExp& e) override;
 
-
-
     // FIXME: Some code was deleted here.
     void operator()(const StringExp& e) override;
-  
+
     void operator()(const CallExp& e) override;
     void operator()(const OpExp& e) override;
 
