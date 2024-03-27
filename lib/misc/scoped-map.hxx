@@ -32,13 +32,13 @@ namespace misc
   Data scoped_map<Key,Data>::get(const Key& key) const requires (!IsPointer<Key,Data>)
   {
  
-      if(stack_.top().contain(key))       // Element found
+      if(stack_.top().contains(key))       // Element found
       {
-        Data res = stack_.top().find(key); 
-        return res;       
+        auto res = stack_.top().find(key); 
+        return res->second;       
       }
 
-    throw std::range_error();  // Element not found
+    throw std::range_error("Error: Not found");  // Element not found
 
   }
 
@@ -46,10 +46,10 @@ namespace misc
   template <typename Key, typename Data>
   Data scoped_map<Key,Data>::get(const Key& key) const requires IsPointer<Key,Data>
   {
-      if(stack_.top().contain(key))       // Element found
+      if(stack_.top().contains(key))       // Element found
       {
-        Data res = stack_.top().find(key); 
-        return res;       
+        auto res = stack_.top().find(key); 
+        return res->second;       
       }
       return nullptr;  // Element not found
 
@@ -86,9 +86,15 @@ namespace misc
   {
     std::map<Key,Data> new_map = std::map<Key,Data>();
 
+    if(stack_.size() == 0)
+    {
+        stack_.push(new_map);
+        return;
+    }
+
     for(auto map : stack_.top())
     {
-      new_map.insert(map.first,map.second);
+      new_map.insert(std::pair(map.first,map.second));
 
     }
     stack_.push(new_map);

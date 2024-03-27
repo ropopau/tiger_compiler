@@ -48,6 +48,7 @@ namespace misc
 
     private:
       std::stack<std::map<Key,Data>> stack_;
+  
   };
 
   template <typename Key, typename Data>
