@@ -7,11 +7,14 @@
 
 #include <ast/dec.hh>
 #include <ast/ty.hh>
+#include <ast/type-constructor.hh>
 
 namespace ast
 {
   /// TypeDec.
-  class TypeDec : public Dec
+  class TypeDec
+    : public Dec
+    , public TypeConstructor
   {
   public:
     /** \name Ctor & dtor.

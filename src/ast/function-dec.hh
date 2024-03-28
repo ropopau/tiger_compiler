@@ -9,12 +9,15 @@
 #include <ast/dec.hh>
 #include <ast/exp.hh>
 #include <ast/name-ty.hh>
+#include <ast/type-constructor.hh>
 #include <ast/var-dec.hh>
 
 namespace ast
 {
   /// FunctionDec.
-  class FunctionDec : public Dec
+  class FunctionDec
+    : public Dec
+    , public TypeConstructor
   {
   public:
     /** \name Ctor & dtor.

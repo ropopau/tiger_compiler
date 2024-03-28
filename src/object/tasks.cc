@@ -16,4 +16,10 @@ namespace object::tasks
 
   // FIXME: Some code was deleted here.
 
+  void object_types_compute()
+  {
+    task_error() << ::object::types_check(*ast::tasks::the_program)
+                 << &misc::error::exit_on_error;
+  }
+
 } // namespace object::tasks

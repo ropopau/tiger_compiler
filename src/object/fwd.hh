@@ -7,6 +7,7 @@
 
 #include <misc/map.hh>
 #include <misc/symbol.hh>
+#include <type/class.hh>
 
 namespace object
 {} // namespace object
