@@ -3,12 +3,13 @@
  */
 
 #include <ostream>
-
+#include <iostream>
 #include <misc/contract.hh>
 #include <misc/scoped-map.hh>
 
 int main()
 {
+
   using misc::scoped_map;
 
   const std::string toto1("toto");

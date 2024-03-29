@@ -55,6 +55,7 @@ namespace bind
     /// The error handler.
     const misc::error& error_get() const;
 
+
     /* The visiting methods. */
     // FIXME: Some code was deleted here.
 
@@ -77,14 +78,39 @@ namespace bind
     /// second step, we process the contents of all the functions
     /// belonging to the current chunk.
 
-    // FIXME: Some code was deleted here.
+    // FIXED: Some code was deleted here.
+
+   
+    void operator()(ast::VarDec& e) override;
+    void operator()(ast::SimpleVar& e) override;
+    void operator()(ast::FunctionDec& e) override;
+    void operator()(ast::CallExp& e) override;
+    void operator()(ast::TypeDec& e) override;
+    void operator()(ast::LetExp& e) override;
+    void operator()(ast::NameTy& e) override;
+    void operator()(ast::ForExp& e) override;
+    void operator()(ast::BreakExp& e) override;
+    void operator()(ast::WhileExp& e) override;
+
+
+    void begin();
+    void end();
+
     /// \}
 
   protected:
     /// Binding errors handler.
     misc::error error_;
 
-    // FIXME: Some code was deleted here (More members).
+    // FIXED: Some code was deleted here (More members).
+
+    misc::scoped_map<misc::symbol,ast::VarDec*> scoped_var_;
+    misc::scoped_map<misc::symbol,ast::FunctionDec*> scoped_func_;
+    misc::scoped_map<misc::symbol,ast::TypeDec*> scoped_type_;
+        
+    std::vector<ast::Ast *> array_loops_ = std::vector<ast::Ast *>();
+
+  
   };
 
 } // namespace bind
