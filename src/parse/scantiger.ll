@@ -82,7 +82,14 @@ id_main         "_main"
 /* The rules.  */
 {int}         {
                 int val = 0;
+                try
+                {
                 val = std::stoi(text());
+                }
+                catch(std::exception& e)
+                {
+                  td.error_ << td.location_ << ": " << misc::error::error_type::scan << "Int too large\n"  ;  
+                }
   // FIXED: Some code was deleted here (Decode, and check the value).
                 return TOKEN_VAL(INT, val);
               }
