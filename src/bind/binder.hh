@@ -80,7 +80,7 @@ namespace bind
 
     // FIXED: Some code was deleted here.
 
-   
+    void operator()(ast::Ast& e) override;
     void operator()(ast::VarDec& e) override;
     void operator()(ast::SimpleVar& e) override;
     void operator()(ast::FunctionDec& e) override;

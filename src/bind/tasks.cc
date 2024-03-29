@@ -18,9 +18,12 @@
 
 namespace bind::tasks
 {
-    void bind_compute(){}
+    void bind_compute()
+    {
+        bind::bind_compute(*ast::tasks::the_program);
+    }
 
-    void bind_display(){}
+    void bind_display(){ast::bindings_display(std::cout) = true;}
 
     void bind_bound(){}
 

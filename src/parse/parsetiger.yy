@@ -187,7 +187,7 @@
 
 %left "|"
 %left "&"
-%nonassoc "<" ">" "<=" ">=" "<>"
+%nonassoc "<" ">" "<=" ">=" "<>" "="
 %left "+" "-"
 %left "*" "/"
 
@@ -207,7 +207,7 @@
 
 // FIXME: Some code was deleted here (More %types).
 %type <ast::exps_type*>       exps exps.1 funcall funcall.1
-%type <ast::FunctionChunk*>   funchunk
+%type <ast::FunctionChunk*>   funchunk 
 %type <ast::Var*>             lvalue
 %type <ast::VarDec*>          vardec tyvardec
 %type <ast::VarChunk*>        varchunk tyvarchunks tyvarchunks.1
@@ -215,6 +215,14 @@
 %type <ast::FunctionDec*>     fundec
 %type <ast::FieldInit*>       rec.2 
 %type <ast::fieldinits_type*> rec rec.1   
+
+
+// ------------------------------------------------------------------------------------------------------------------- BEGIN
+%type <ast::ChunkList*> classfields
+%type <ast::MethodChunk*> methchunk
+%type <ast::MethodDec*> methdec
+// ------------------------------------------------------------------------------------------------------------------- END
+
 
 
 // Solving conflicts on:
@@ -227,9 +235,8 @@
 // FIXED: Some code was deleted here (Other declarations).
 %precedence VAR
 %precedence CHUNKS
-
 %precedence TYPE
-%precedence FUNCTION
+%precedence FUNCTION METHOD
 %precedence PRIMITIVE
 %precedence CLASS
   
@@ -304,11 +311,11 @@ exp:
   
   
   | exp "&" exp  {$$ = td.enable_extensions().parse(
-                  Tweast() << "(if " << $1 << " then( if " << $3 << " then(1)) else (0))");}
+                  Tweast() << "if " << $1 << " then( if " << $3 << " then (1)) else (0)");}
                     
 
   | exp "|" exp  {$$ = td.enable_extensions().parse(
-                  Tweast() << "(if " << $1 << " then(1)  else (if " << $3 << " then (1) 0))");}
+                  Tweast() << "if " << $1 << " then(1)  else (if " << $3 << " then (1) 0)");}
   | "(" exps ")" { $$ = make_SeqExp(@$, $2); }
   /* Assignment. */
   | lvalue ":=" exp {$$ = make_AssignExp(@$, $1, $3);}
@@ -323,8 +330,8 @@ exp:
   | "let" chunks "in" exps "end" {$$ = make_LetExp(@$, $2, make_SeqExp(@$, $4)); }
   
   /* object-oriented */
-  //| "new" typeid    {}
-  //| lvalue "." ID "(" funcall ")"
+   | "new" typeid  {$$ = make_ObjectExp(@$, $2);} // OBJECT --------------------------------------------------------------------------------
+   | lvalue "." ID "(" funcall ")" {$$ = make_MethodCallExp(@$, $3, $5, $1);}  // OBJECT ----------------------------------------------------
   /* Cast of an expression  to a given type */
   | CAST "(" exp "," ty ")" { $$ = make_CastExp(@$, $3, $5); }
   /* An expression metavariable */
@@ -342,6 +349,7 @@ lvalue:
 
 funcall:
   %empty               {$$ = make_exps_type(); }
+  /* Cast of an expression  to a given type */
 | funcall.1           { $$ = $1; }
 ;
 
@@ -383,7 +391,7 @@ chunks:
      which is why we end the recursion with a %empty. */
   %empty                  {$$ = make_ChunkList(@$); }
 | tychunk chunks        { $$ = $2; $$->push_front($1);}
-| funchunk chunks         { $$ = $2; $$->push_front($1);}//
+| funchunk chunks         {$$ = $2; $$->push_front($1);}
 | varchunk chunks         { $$ = $2; $$->push_front($1); }
 /* A list of chunk metavariable */
 | CHUNKS "(" INT ")" chunks { $$ = metavar<ast::ChunkList>(td, $3); $$->splice_back(*$5);}
@@ -428,12 +436,17 @@ tychunk:
 
 tydec:
   "type" ID "=" ty { $$ = make_TypeDec(@$, $2, $4); }
+  | "class" ID "extends" typeid "{" classfields "}" { $$ = make_TypeDec(@$, $2, make_ClassTy(@$, $4, $6)); } // OBJECT ------------------------------------
+  | "class" ID "{" classfields "}"  { $$ = make_TypeDec(@$, $2, make_ClassTy(@$, nullptr, $4)); } // OBJECT -----------------------------------------------
 ;
+
 
 ty:
   typeid               { $$ = $1; }
 | "{" tyfields "}"     { $$ = make_RecordTy(@$, $2); }
 | "array" "of" typeid  { $$ = make_ArrayTy(@$, $3); }
+| "class" "extends" typeid "{" classfields "}" { $$ = make_ClassTy(@$, $3, $5); } // OBJECT --------------------------------------------------
+| "class" "{" classfields "}" { $$ = make_ClassTy(@$, nullptr, $3); } // OBJECT --------------------------------------------------------------
 ;
 
 tyfields:
@@ -447,7 +460,7 @@ tyfields.1:
 ;
 
 tyfield:
-  ID ":" typeid     { $$ = make_Field(@$, $1, $3); }
+  ID ":" typeid     {$$ = make_Field(@$, $1, $3); }
 ;
 
 
@@ -464,29 +477,25 @@ tyvarchunks.1:
 tyvardec:
   ID ":" typeid    {$$ = make_VarDec(@$, $1, $3, nullptr);}
 
+// ----------------------------------------------------------------------------------------------------------------------- BEGIN
 
-//ext:
-//  %empty
-//  | "extends" typeid
-//  ;
+classfields:
+  %empty     {$$ = make_ChunkList(@$); }
+  | varchunk classfields { $$ = $2; $$->push_front($1);}
+  | methchunk classfields { $$ = $2; $$->push_front($1);}
+;
 
-//classfields:
-//  %empty
-//  | classfields classfield
-//  ;
-//classfield:
-//  vardec
-//  | meth.1
-//  ;
+methchunk:
+  methdec %prec CHUNKS { $$ = make_MethodChunk(@1); $$->push_front(*$1);}
+  | methdec methchunk { $$ = $2; $$->push_front(*$1); }
+;
 
-//meth.1:
-//  %empty
-//  | meth.1 meth
-//  ;
-//meth:
-//  "method" ID "(" tyfields ")" "=" exp
-//  | "method" ID "(" tyfields ")" typeid "=" exp
-//  ;
+methdec:
+  "method" ID "(" tyvarchunks ")" "=" exp { $$ = make_MethodDec(@$, $2, $4, nullptr,  $7); }
+  | "method" ID "(" tyvarchunks ")" ":" typeid "=" exp { $$ = make_MethodDec(@$, $2, $4, $7, $9); }
+;
+
+// ---------------------------------------------------------------------------------------------------------------------- END
 
 %token NAMETY "_namety";
 typeid:

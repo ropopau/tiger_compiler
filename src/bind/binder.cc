@@ -35,11 +35,17 @@ namespace bind
 
    }
 
-
+  void Binder::operator()(ast::Ast& e)
+  {
+    begin();
+    e.accept(*this);
+    end();
+  }
 
   void Binder::operator()(ast::VarDec& e) 
   {
     this->scoped_var_.put(e.name_get(),&e);
+    
     super_type::operator()(e);
   }
 
@@ -51,7 +57,6 @@ namespace bind
 
   void Binder::operator()(ast::FunctionDec& e)
   {
-  
     this->scoped_func_.put(e.name_get(),&e);
     this->begin();
     super_type::operator()(e);

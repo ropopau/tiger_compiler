@@ -14,8 +14,12 @@ namespace bind
       if they do escape. */
   void bind_compute(ast::Ast& tree)
   {
-
+    /// boolean to check if an escapes pass was done in desugar
+    bind::bind = true;
+    Binder binder_compute;
+    binder_compute(tree);
    
   }
 
+  bool bind = false;
 } // namespace escapes

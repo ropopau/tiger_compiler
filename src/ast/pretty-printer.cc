@@ -15,6 +15,16 @@ namespace ast
   // Anonymous namespace: these functions are private to this file.
   namespace
   {
+/// Output \a e on \a ostr.
+    inline std::ostream& operator<<(std::ostream& ostr, const Escapable& e)
+    {
+      if (escapes_display(ostr)
+          // FIXME: Some code was deleted here.
+      )
+        ostr << "/* escaping */ ";
+
+      return ostr;
+    }
 
     /// \brief Output \a e on \a ostr.
     ///
@@ -23,20 +33,29 @@ namespace ast
     inline std::ostream& operator<<(std::ostream& ostr, const Dec& e)
     {
       ostr << e.name_get();
+      if (bindings_display(ostr))
+        ostr << " /* " << &e << " */";
       return ostr;
     }
+
   } // namespace
 
   PrettyPrinter::PrettyPrinter(std::ostream& ostr)
     : ostr_(ostr)
   {}
 
-  void PrettyPrinter::operator()(const SimpleVar& e) { ostr_ << e.name_get(); }
+  void PrettyPrinter::operator()(const SimpleVar& e) {
+    ostr_ << e.name_get(); 
+    if (bindings_display(ostr_))
+      ostr_ << " /* " << e.def_get() << " */";
+
+    }
 
   void PrettyPrinter::operator()(const FieldVar& e)
   {
     // FIXED: Some code was deleted here.
     this->ostr_ << e.var_get();
+    
   }
 
   /* Foo[10]. */
@@ -53,8 +72,12 @@ namespace ast
 
   void PrettyPrinter::operator()(const CallExp& e)
   {
-    if (e.args_get().size() != 0)
-      ostr_ << e.name_get() << "(" << misc::separate(e.args_get(), ", ") << ")";
+    if (e.args_get().size() != 0){
+      ostr_ << e.name_get() ;
+      if (bindings_display(ostr_))
+        ostr_ << " /* " << e.def_get() << " */";
+      ostr_ << "(" << misc::separate(e.args_get(), ", ") << ")";
+    }
   }
 
   void PrettyPrinter::operator()(const IntExp& e) { ostr_ << e.value_get(); }
@@ -75,9 +98,10 @@ namespace ast
   void PrettyPrinter::operator()(const SeqExp& e)
   {
     // FIXED: Some code was deleted here.
-
     // if (e.exps_get().size() > 1)
-    // ostr_ << "(" << misc::separate(e.exps_get(), ";") << misc::iendl << ")";
+    ostr_ << "(" << misc::incendl << misc::separate(e.exps_get(), ";" ) << misc::decendl << ")";
+    
+    /*
     auto& exps = e.exps_get();
     for (size_t i = 0; i < exps.size(); ++i)
       {
@@ -93,10 +117,11 @@ namespace ast
         // ostr_ << *exps.at(i);
         (i != exps.size() - 1) ? (ostr_ << *exps.at(i))
                                : (ostr_ << *exps.at(exps.size() - 1)
-                                        << misc::resetindent << misc::incendl);
+                                        << misc::incendl);
         if (i == exps.size() - 1)
           ostr_ << ")";
       }
+    */
     // ostr_ << e.exps_get().size();
   }
 
@@ -109,12 +134,14 @@ namespace ast
   {
     // FIXED: Some code was deleted here.
     ostr_ << e.name_get();
+    if (bindings_display(ostr_))
+      ostr_ << " /* " << e.def_get() << " */";
   }
 
   void PrettyPrinter::operator()(const AssignExp& e)
   {
     // FIXED: Some code was deleted here.
-    ostr_ << e.var_get() << " := " << e.exp_get();
+    ostr_ << e.var_get() << " = " << e.exp_get() << misc::iendl;
   }
 
   void PrettyPrinter::operator()(const IfExp& e)
@@ -147,8 +174,11 @@ namespace ast
 
   void PrettyPrinter::operator()(const LetExp& e)
   {
-    ostr_ << misc::incendl << "let" << misc::iendl << e.chunks_get() << "in"
-          << misc::iendl << e.body_get() << "end";
+    ostr_ << "let" << misc::incendl;
+    ostr_ << e.chunks_get();
+    ostr_ << misc::iendl << "in" ;
+    //ostr_ << misc::incindent << e.body_get();
+    ostr_ << misc::iendl << "end";
   }
 
   void PrettyPrinter::operator()(const ArrayExp& e)
@@ -179,9 +209,14 @@ namespace ast
   void PrettyPrinter::operator()(const VarDec& e)
   {
     // `type_name' might be omitted.
-    ostr_ << e.name_get() << ": ";
+    ostr_ << e.name_get();
+    ostr_ << " := ";
     // `init' can be null in case of formal parameter.
-    ostr_ << *e.type_name_get();
+    if (e.type_name_get() != nullptr)
+      ostr_ << *e.type_name_get();
+    if (e.init_get() != nullptr)
+      ostr_ << *e.init_get();
+    ostr_ << misc::iendl;
   }
 
   void PrettyPrinter::operator()(const FunctionChunk& e)
@@ -192,10 +227,12 @@ namespace ast
   void PrettyPrinter::operator()(const FunctionDec& e)
   {
     // FIXED: Some code was deleted here.
-    ostr_ << misc::iendl;
     if (e.body_get())
       {
-        ostr_ << "function " << e.name_get() << "(";
+        if (bindings_display(ostr_))
+          ostr_ << "function " << e << "(";
+        else
+          ostr_ << "function " << e.name_get() << "(";
         ostr_ << misc::separate(e.formals_get().decs_get(), ", ");
         ostr_ << ")";
         if (e.result_get() != nullptr)
@@ -203,12 +240,15 @@ namespace ast
             ostr_ << " : ";
             ostr_ << *e.result_get();
           }
-        ostr_ << " = " << misc::incendl;
+        ostr_ << " = ";
         ostr_ << *e.body_get();
       }
     else
       {
-        ostr_ << "primitive " << e.name_get() << "(";
+        if (bindings_display(ostr_))
+          ostr_ << "primitive " << e << "(";
+        else
+          ostr_ << "primitive " << e.name_get() << "(";
         ostr_ << misc::separate(e.formals_get().decs_get(), ", ");
         ostr_ << ")";
         if (e.result_get() != nullptr)
@@ -217,6 +257,7 @@ namespace ast
             ostr_ << *e.result_get();
           }
       }
+    ostr_ << misc::iendl ;
   }
 
   void PrettyPrinter::operator()(const TypeChunk& e)

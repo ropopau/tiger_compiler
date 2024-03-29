@@ -82,14 +82,7 @@ id_main         "_main"
 /* The rules.  */
 {int}         {
                 int val = 0;
-                try
-                {
                 val = std::stoi(text());
-                }
-                catch(std::exception& e)
-                {
-                  td.error_ << td.location_ << ": " << misc::error::error_type::scan << "Int too large\n"  ;  
-                }
   // FIXED: Some code was deleted here (Decode, and check the value).
                 return TOKEN_VAL(INT, val);
               }
@@ -100,7 +93,7 @@ id_main         "_main"
 ":="          {return TOKEN(ASSIGN);}
 "break"       {return TOKEN(BREAK);}
 "cast"        {return TOKEN(CAST);}
-"class"       {return TOKEN(CLASS);}
+
 ":"           {return TOKEN(COLON);}
 ","           {return TOKEN(COMMA);}
 "/"           {return TOKEN(DIVIDE);}
@@ -109,7 +102,7 @@ id_main         "_main"
 "else"        {return TOKEN(ELSE);}
 "end"         {return TOKEN(END);}
 "="           {return TOKEN(EQ);}
-"extends"     {return TOKEN(EXTENDS);}
+
 "for"         {return TOKEN(FOR);}
 "function"    {return TOKEN(FUNCTION);}
 ">="          {return TOKEN(GE);}
@@ -124,9 +117,9 @@ id_main         "_main"
 "("           {return TOKEN(LPAREN);}
 "<"           {return TOKEN(LT);}
 "-"           {return TOKEN(MINUS);}
-"method"      {return TOKEN(METHOD);}
+
 "<>"          {return TOKEN(NE);}
-"new"         {return TOKEN(NEW);}
+
 "nil"         {return TOKEN(NIL);}
 "of"          {return TOKEN(OF);}
 "|"           {return TOKEN(OR);}
@@ -142,6 +135,24 @@ id_main         "_main"
 "type"        {return TOKEN(TYPE);}
 "var"         {return TOKEN(VAR);}
 "while"       {return TOKEN(WHILE);}
+
+/* Object -------------------------------------------------------------------------------------------------------------------------------------*/
+"class"       { if (!td.enable_object_extensions_p_)
+                  td.error_ << misc::error::error_type::scan << td.location_ << ": invalid identifier: `" << misc::escape(text()) << "'\n";
+                else
+                  return TOKEN(CLASS);}
+"extends"     {if (!td.enable_object_extensions_p_)
+                  td.error_ << misc::error::error_type::scan << td.location_ << ": invalid identifier: `" << misc::escape(text()) << "'\n";
+               else
+                  return TOKEN(EXTENDS);}
+"method"      { if (!td.enable_object_extensions_p_)
+                  td.error_ << misc::error::error_type::scan << td.location_ << ": invalid identifier: `" << misc::escape(text()) << "'\n";
+               else
+                  return TOKEN(METHOD);}
+"new"         { if (!td.enable_object_extensions_p_)
+                  td.error_ << misc::error::error_type::scan << td.location_ << ": invalid identifier: `" << misc::escape(text()) << "'\n";
+               else
+                  return TOKEN(NEW);}
 
 {id}|{id_main}     {return TOKEN_VAL(ID, text());}
 "\""     {start(SC_STRING);}
