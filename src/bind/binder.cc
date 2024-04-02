@@ -42,17 +42,21 @@ namespace bind
     end();
   }
 
-  void Binder::operator()(ast::VarDec& e) 
   {
     this->scoped_var_.put(e.name_get(),&e);
-    
     super_type::operator()(e);
   }
 
   void Binder::operator()(ast::SimpleVar& e)
   {
-     // Error ??
-     e.def_set(this->scoped_var_.get(e.name_get()));
+    // Error ??
+    auto g = this->scoped_var_.get(e.name_get());
+    if (g == nullptr){
+      this->error_ << misc::error::error_type::bind; 
+      std::cerr << "Error at " << e.location_get() << ": Undeclared variable.\n";
+      this->error_.exit();
+    }
+    e.def_set(this->scoped_var_.get(e.name_get()));
   }
 
   void Binder::operator()(ast::FunctionDec& e)
@@ -68,6 +72,15 @@ namespace bind
   {
 
     // Error ??
+
+    auto g = this->scoped_func_.get(e.name_get());
+    if (g == nullptr){
+      this->error_ << misc::error::error_type::bind; 
+      std::cerr << "Error at " << e.location_get() << ": Undeclared function.\n";
+      this->error_.exit();
+    }
+      
+      
     e.def_set(this->scoped_func_.get(e.name_get()));
 
   }
@@ -81,6 +94,21 @@ namespace bind
 
   void Binder::operator()(ast::NameTy& e)
   {
+    // Error ??
+    if (e.name_get().get().compare("string") == 0 ||
+        e.name_get().get().compare("int") == 0 ||
+        e.name_get().get().compare("float") == 0 ||
+        e.name_get().get().compare("double") == 0)
+        return;
+
+    auto g = this->scoped_type_.get(e.name_get());
+    if (g == nullptr){
+      this->error_ << misc::error::error_type::bind; 
+      std::cerr << "Error at " << e.location_get() << ": Undeclared type.\n";
+      this->error_.exit();
+    }
+      
+      
     e.def_set(this->scoped_type_.get(e.name_get()));
   }
 
