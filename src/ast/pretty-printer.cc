@@ -236,7 +236,7 @@ namespace ast
     ostr_ << "var ";
     ostr_ << e.name_get();
     if (bindings_display(ostr_))
-      ostr_ << " /* " << "A RAJOUTER DEMANDER YAKA"<< " */";
+      ostr_ << " /* " << &e << " */";
     ostr_ << " := ";
     // `init' can be null in case of formal parameter.
     if (e.type_name_get() != nullptr)
