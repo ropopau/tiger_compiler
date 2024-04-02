@@ -42,6 +42,7 @@ namespace bind
     end();
   }
 
+  void Binder::operator()(ast::VarDec& e)
   {
     this->scoped_var_.put(e.name_get(),&e);
     super_type::operator()(e);
