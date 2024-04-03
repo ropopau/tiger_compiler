@@ -7,6 +7,9 @@
 
 #include <bind/binder.hh>
 #include <bind/libbind.hh>
+#include <bind/renamer.hh>
+
+
 
 namespace bind
 {
@@ -18,6 +21,12 @@ namespace bind
     bind::bind = true;
     Binder binder_compute;
     binder_compute(tree);
+  }
+  void rename_compute(ast::Ast& tree)
+  {
+
+    Renamer rename_compute;
+    rename_compute(tree);
   }
 
   bool bind = false;
