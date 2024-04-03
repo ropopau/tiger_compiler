@@ -131,6 +131,15 @@ namespace ast
     ostr_ << ")";
   }
 
+  void PrettyPrinter::operator()(const BreakExp& e)
+  {
+    ostr_ << "break" ;
+    if (bindings_display(ostr_))
+      ostr_ << " /* " << e.def_get() << " */";
+  }
+
+
+
   void PrettyPrinter::operator()(const StringExp& e)
   {
     ostr_ << "\"" << e.value_get() << "\"";
@@ -168,14 +177,23 @@ namespace ast
 
   void PrettyPrinter::operator()(const WhileExp& e)
   {
-    //ostr_ << "while " << e.test_get() << misc::incendl << "do " << e.body_get();
+    ostr_ << "while ";
+    if (bindings_display(ostr_))
+      ostr_ << " /* " << &e << " */";
+    
+    ostr_ << e.test_get() << " do " << misc::iendl << e.body_get();
   }
 
   void PrettyPrinter::operator()(const ForExp& e)
   {
-    //ostr_ << "for " << e.vardec_get().name_get()
-    //      << " := " << e.vardec_get().init_get() << " to " << e.hi_get()
-    //     << " do " << misc::incendl << e.body_get();
+    ostr_ << "for ";
+    if (bindings_display(ostr_))
+      ostr_ << " /* " << &e << " */";
+    ostr_ << e.vardec_get().name_get();
+    if (bindings_display(ostr_))
+      ostr_ << " /* " << &e.vardec_get() << " */";
+    ostr_ << " := " << *e.vardec_get().init_get() << " to " << e.hi_get()
+         << " do " << misc::incendl << e.body_get();
   }
   void PrettyPrinter::operator()(const LetExp& e)
   {
@@ -296,8 +314,13 @@ namespace ast
     ostr_ << "type " << e.name_get();
     if (bindings_display(ostr_))
       ostr_ << " /* " << &e << " */";
-    ostr_ << " = {" << e.ty_get() << "}" << misc::iendl;
-    //e.ty_get().accept(*this);
+    auto a = &e.ty_get();
+    auto c = const_cast<ast::Ty*>(a);
+    auto ok = dynamic_cast<ast::ClassTy*>(c);
+    if (ok == nullptr)
+      ostr_ << " = {" << e.ty_get() << "}" << misc::iendl;
+    else
+      ostr_ << " =" << e.ty_get() << misc::iendl;
   }
 
   // OBJECTS ------------------------------------------------------------------------------------

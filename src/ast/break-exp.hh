@@ -33,6 +33,9 @@ namespace ast
     /** \name Accessors.
      ** \{ */
     // FIXME: Some code was deleted here.
+    const Exp* def_get() const;
+    Exp* def_get();
+    void def_set(Exp* def);
     // FIXME: Some code was deleted here.
     /** \} */
 
