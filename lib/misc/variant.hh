@@ -56,25 +56,23 @@ namespace misc
     variant() = default;
 
     template <typename U>
-      requires ContainsTypeSet<U, T, Ts...>
-    variant(const U& rhs);
+    requires ContainsTypeSet<U, T, Ts...> variant(const U& rhs);
     /// \}
 
     template <typename U>
-      requires ContainsTypeSet<U, T, Ts...>
-    self_type& operator=(const U&);
+    requires ContainsTypeSet<U, T, Ts...> self_type& operator=(const U&);
 
     /// \brief Convert this variant to a value of type \a U.
     ///
     /// This conversion relies on std::get.  In particular, if the
     /// conversion fails, a std::bad_variant_access exception is thrown.
     template <typename U>
-      requires ContainsTypeGet<U, T, Ts...>
+    requires ContainsTypeGet<U, T, Ts...>
     operator U&();
 
     /// Likewise, const version.
     template <typename U>
-      requires ContainsTypeGet<U, T, Ts...>
+    requires ContainsTypeGet<U, T, Ts...>
     operator const U&() const;
 
     /** \brief Visit variants of this class.
@@ -82,7 +80,7 @@ namespace misc
      ** these wrappers.
      ** \{ */
     template <typename V>
-      requires Visits<V, T, Ts...>
+    requires Visits<V, T, Ts...>
     auto visit(V&& visitor) const;
 
     template <typename V, class... Variants>

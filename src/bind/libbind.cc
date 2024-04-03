@@ -9,8 +9,6 @@
 #include <bind/libbind.hh>
 #include <bind/renamer.hh>
 
-
-
 namespace bind
 {
   /** Walk the tree, and set the escape flag of variables and arguments
@@ -24,7 +22,6 @@ namespace bind
   }
   void rename_compute(ast::Ast& tree)
   {
-
     Renamer rename_compute;
     rename_compute(tree);
   }

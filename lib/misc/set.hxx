@@ -13,9 +13,8 @@
 
 namespace misc
 {
-  template <class Key, class Compare, class Allocator>
-  template <typename Iter>
-    requires Iterator<Iter, Key>
+  template <class Key, class Compare, class Allocator> template <typename Iter>
+  requires Iterator<Iter, Key>
   inline set<Key, Compare, Allocator>::set(Iter first, Iter last)
   {
     this->insert(first, last);
@@ -24,7 +23,7 @@ namespace misc
   /* Useful to convert a std::vector or other Compare in misc::set.  */
   template <class Key, class Compare, class Allocator>
   template <typename Container>
-    requires ConstIterableType<Container, Key>
+  requires ConstIterableType<Container, Key>
   inline set<Key, Compare, Allocator>::set(const Container v)
   {
     for (const Key& x : v)

@@ -5,7 +5,6 @@
 
 // FIXME: Some code was deleted here.
 
-
 #include <ostream>
 
 #include <ast/libast.hh>
@@ -18,19 +17,16 @@
 
 namespace bind::tasks
 {
-    void bind_compute()
-    {
-        bind::bind_compute(*ast::tasks::the_program);
-    }
+  void bind_compute() { bind::bind_compute(*ast::tasks::the_program); }
 
-    void bind_display(){ast::bindings_display(std::cout) = true;}
+  void bind_display() { ast::bindings_display(std::cout) = true; }
 
-    void rename_compute()
-    {
-        bind::bind_compute(*ast::tasks::the_program);
-        bind::rename_compute(*ast::tasks::the_program);
-    }
+  void rename_compute()
+  {
+    bind::bind_compute(*ast::tasks::the_program);
+    bind::rename_compute(*ast::tasks::the_program);
+  }
 
-    void bind_bound(){}
+  void bind_bound() {}
 
-}
+} // namespace bind::tasks

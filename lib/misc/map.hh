@@ -87,8 +87,8 @@ namespace misc
     /// Lookup for a list \a ts of T's, throwing std::range_error if
     /// one or several elements are not found.
     template <typename Container>
-      requires ConstIterableType<Container, T>
-    std::vector<N> operator()(const Container& ts) const;
+    requires ConstIterableType<Container, T> std::vector<N>
+    operator()(const Container& ts) const;
 
     /// \name Iterating.
     /// \{

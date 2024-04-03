@@ -3,16 +3,19 @@
 
 #include "helper.hh"
 
-namespace {
+namespace
+{
   using namespace ast;
   class SwigAstTypeVisitor : public ConstVisitor
   {
-    public:
-      PyObject *result;
-    SwigAstTypeVisitor() : GenVisitor<misc::constify_traits>() {}
+  public:
+    PyObject* result;
+    SwigAstTypeVisitor()
+      : GenVisitor<misc::constify_traits>()
+    {}
     ~SwigAstTypeVisitor() {}
 
-#define STHELPER(TYPE) STCONVERT(TYPE, p_ast__ ## TYPE)
+#define STHELPER(TYPE) STCONVERT(TYPE, p_ast__##TYPE)
     STHELPER(ArrayExp)
     STHELPER(ArrayTy)
     STHELPER(AssignExp)
@@ -48,7 +51,7 @@ namespace {
 #undef STHELPER
 
 #define STCHUNKHELPER(TYPE)                                                    \
-    STCONVERT(TYPE ## Chunk, p_ast__ChunkT_ast__ ## TYPE ## Dec_t)
+  STCONVERT(TYPE##Chunk, p_ast__ChunkT_ast__##TYPE##Dec_t)
     STCHUNKHELPER(Function)
     STCHUNKHELPER(Method)
     STCHUNKHELPER(Type)
@@ -57,7 +60,7 @@ namespace {
   };
 } // namespace
 
-PyObject *get_swig_real_ast_type(const ast::Ast& e)
+PyObject* get_swig_real_ast_type(const ast::Ast& e)
 {
   SwigAstTypeVisitor stv;
   e.accept(stv);

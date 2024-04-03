@@ -133,12 +133,10 @@ namespace ast
 
   void PrettyPrinter::operator()(const BreakExp& e)
   {
-    ostr_ << "break" ;
+    ostr_ << "break";
     if (bindings_display(ostr_))
       ostr_ << " /* " << e.def_get() << " */";
   }
-
-
 
   void PrettyPrinter::operator()(const StringExp& e)
   {
@@ -180,7 +178,7 @@ namespace ast
     ostr_ << "while ";
     if (bindings_display(ostr_))
       ostr_ << " /* " << &e << " */";
-    
+
     ostr_ << e.test_get() << " do " << misc::iendl << e.body_get();
   }
 
@@ -193,7 +191,7 @@ namespace ast
     if (bindings_display(ostr_))
       ostr_ << " /* " << &e.vardec_get() << " */";
     ostr_ << " := " << *e.vardec_get().init_get() << " to " << e.hi_get()
-         << " do " << misc::incendl << e.body_get();
+          << " do " << misc::incendl << e.body_get();
   }
   void PrettyPrinter::operator()(const LetExp& e)
   {
@@ -237,10 +235,7 @@ namespace ast
     ostr_ << misc::iendl;
   }
 
-  void PrettyPrinter::operator()(const NilExp& e)
-  {
-    ostr_ << "nil";
-  }
+  void PrettyPrinter::operator()(const NilExp& e) { ostr_ << "nil"; }
 
   void PrettyPrinter::operator()(const VarDec& e)
   {
@@ -258,12 +253,13 @@ namespace ast
     ostr_ << e.name_get();
     if (bindings_display(ostr_))
       ostr_ << " /* " << &e << " */";
-    
+
     // `init' can be null in case of formal parameter.
-    if (e.type_name_get() != nullptr){
-      ostr_ << " : ";
-      ostr_ << *e.type_name_get();
-    }
+    if (e.type_name_get() != nullptr)
+      {
+        ostr_ << " : ";
+        ostr_ << *e.type_name_get();
+      }
     ostr_ << " := ";
     if (e.init_get() != nullptr)
       ostr_ << *e.init_get();

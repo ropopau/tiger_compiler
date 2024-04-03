@@ -64,10 +64,9 @@ namespace misc
     return xfind(t)->second;
   }
 
-  template <class T, class N>
-  template <typename Container>
-    requires ConstIterableType<Container, T>
-  std::vector<N> map<T, N>::operator()(const Container& ts) const
+  template <class T, class N> template <typename Container>
+  requires ConstIterableType<Container, T> std::vector<N>
+  map<T, N>::operator()(const Container& ts) const
   {
     std::vector<N> res;
     for (const T& t : ts)

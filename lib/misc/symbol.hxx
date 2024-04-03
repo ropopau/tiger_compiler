@@ -13,9 +13,9 @@ namespace misc
   {
     // FIXED: Some code was deleted here.
     if (*this != rhs)
-    {
+      {
         this->obj_ = &rhs.get();
-    }
+      }
     return *this;
   }
 

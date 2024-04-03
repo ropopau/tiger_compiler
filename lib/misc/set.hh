@@ -49,12 +49,12 @@ namespace misc
     explicit set() = default;
 
     template <typename Iter>
-      requires Iterator<Iter, Key>
+    requires Iterator<Iter, Key>
     explicit set(Iter first, Iter last);
 
     /* Useful to convert a container (e.g. std::vector) in misc::set.  */
     template <typename Container>
-      requires ConstIterableType<Container, Key>
+    requires ConstIterableType<Container, Key>
     explicit set(const Container v);
 
     /// \}

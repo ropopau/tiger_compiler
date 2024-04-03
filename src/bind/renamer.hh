@@ -5,9 +5,9 @@
 
 #pragma once
 
+#include <map>
 #include <ast/default-visitor.hh>
 #include <ast/non-object-visitor.hh>
-#include <map>
 
 namespace bind
 {
@@ -43,7 +43,7 @@ namespace bind
     void operator()(ast::CallExp& e) override;
     void operator()(ast::TypeDec& e) override;
     void operator()(ast::NameTy& e) override;
-    
+
     /// \}
 
     /// \name Visiting usage sites.
@@ -53,8 +53,7 @@ namespace bind
 
   private:
     // FIXME: Some code was deleted here.
-    std::map<const ast::Ast*,misc::symbol> map_;
-    
+    std::map<const ast::Ast*, misc::symbol> map_;
   };
 
 } // namespace bind

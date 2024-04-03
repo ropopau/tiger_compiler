@@ -44,13 +44,12 @@ namespace bind
   {
     auto g = this->scoped_var_.get(e.name_get());
     if (g != nullptr)
-    {
+      {
         this->error_ << misc::error::error_type::bind;
-        std::cerr << "Error at " << e.location_get()
-                  << ": Variable \""<<  e.name_get() <<"\" redefinition.\n";
+        std::cerr << "Error at " << e.location_get() << ": Variable \""
+                  << e.name_get() << "\" redefinition.\n";
         this->error_.exit();
-
-    }
+      }
     this->scoped_var_.put(e.name_get(), &e);
     super_type::operator()(e);
   }
@@ -145,11 +144,12 @@ namespace bind
   void Binder::operator()(ast::BreakExp& e)
   {
     if (this->array_loops_.size() == 0)
-    {
-      this->error_ << misc::error::error_type::bind;
-      std::cerr << "Error at " << e.location_get() << ": Break outside any loop.\n";
-      this->error_.exit();
-    }
+      {
+        this->error_ << misc::error::error_type::bind;
+        std::cerr << "Error at " << e.location_get()
+                  << ": Break outside any loop.\n";
+        this->error_.exit();
+      }
     auto a = this->array_loops_;
     ast::Ast* lp = a[a.size() - 1];
     this->array_loops_.pop_back();
