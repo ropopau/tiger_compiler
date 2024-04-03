@@ -52,6 +52,7 @@ namespace ast
     // FIXED: Some code was deleted here.
     const MethodDec& def_get() const;
     MethodDec& def_get(); 
+    void def_set(MethodDec*);
     // FIXED: Some code was deleted here.
     /** \} */
 
