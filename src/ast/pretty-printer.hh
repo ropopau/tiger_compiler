@@ -72,7 +72,7 @@ namespace ast
     void operator()(const RecordTy& e) override;
 
     void operator()(const ArrayTy& e) override;
-
+    void operator()(const NilExp& e) override;
     void operator()(const Field& e) override;
     void operator()(const IntExp& e) override;
     void operator()(const BreakExp& e) override;

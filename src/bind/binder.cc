@@ -47,7 +47,7 @@ namespace bind
     {
         this->error_ << misc::error::error_type::bind;
         std::cerr << "Error at " << e.location_get()
-                  << ": Multiple variable declaration.\n";
+                  << ": Variable \""<<  e.name_get() <<"\" redefinition.\n";
         this->error_.exit();
 
     }

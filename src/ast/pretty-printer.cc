@@ -92,7 +92,7 @@ namespace ast
 
   void PrettyPrinter::operator()(const RecordExp& e)
   {
-    ostr_ << e.type_name_get() << "{" << misc::separate(e.fields_get(), ", ")
+    ostr_ << e.type_name_get() << " {" << misc::separate(e.fields_get(), ", ")
           << "}";
   }
 
@@ -237,6 +237,11 @@ namespace ast
     ostr_ << misc::iendl;
   }
 
+  void PrettyPrinter::operator()(const NilExp& e)
+  {
+    ostr_ << "nil";
+  }
+
   void PrettyPrinter::operator()(const VarDec& e)
   {
     // `type_name' might be omitted.
@@ -253,10 +258,13 @@ namespace ast
     ostr_ << e.name_get();
     if (bindings_display(ostr_))
       ostr_ << " /* " << &e << " */";
-    ostr_ << " := ";
+    
     // `init' can be null in case of formal parameter.
-    if (e.type_name_get() != nullptr)
+    if (e.type_name_get() != nullptr){
+      ostr_ << " : ";
       ostr_ << *e.type_name_get();
+    }
+    ostr_ << " := ";
     if (e.init_get() != nullptr)
       ostr_ << *e.init_get();
   }
@@ -320,7 +328,7 @@ namespace ast
     if (ok == nullptr)
       ostr_ << " = {" << e.ty_get() << "}" << misc::iendl;
     else
-      ostr_ << " =" << e.ty_get() << misc::iendl;
+      ostr_ << " = " << e.ty_get() << misc::iendl;
   }
 
   // OBJECTS ------------------------------------------------------------------------------------
