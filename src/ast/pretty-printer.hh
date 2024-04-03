@@ -75,18 +75,16 @@ namespace ast
 
     void operator()(const Field& e) override;
     void operator()(const IntExp& e) override;
-
+    void operator()(const BreakExp& e) override;
     // OBJECTS ------------------------------------------------------------------------------------
 
-  void operator()(const ObjectExp& e) override;
+    void operator()(const ObjectExp& e) override;
 
-  void operator()(const MethodChunk& e) override;
-  void operator()(const MethodCallExp& e) override;
+    void operator()(const MethodChunk& e) override;
+    void operator()(const MethodCallExp& e) override;
 
-  void operator()(const MethodDec& e) override;
-  void operator()(const ClassTy& e) override;
-
-
+    void operator()(const MethodDec& e) override;
+    void operator()(const ClassTy& e) override;
 
     /// \}
 
