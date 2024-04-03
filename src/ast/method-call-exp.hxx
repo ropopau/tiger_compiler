@@ -14,8 +14,8 @@ namespace ast
   inline Var& MethodCallExp::object_get() { return *object_; }
 
   // FIXED: Some code was deleted here.
-  inline const MethodDec& MethodCallExp::def_get() const { return *def_; }
-  inline MethodDec& MethodCallExp::def_get() { return *def_; }
+  inline const MethodDec* MethodCallExp::def_get() const { return def_; }
+  inline MethodDec* MethodCallExp::def_get() { return def_; }
   inline void MethodCallExp::def_set(MethodDec* def) { def_ = def; }
   // FIXED: Some code was deleted here.
 
