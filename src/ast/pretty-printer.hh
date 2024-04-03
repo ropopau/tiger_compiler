@@ -95,7 +95,7 @@ namespace ast
     template <typename RecordClass> void print_record(const RecordClass& e);
 
     // Whether we are in a ast::ClassTy.
-    bool within_classty_p_ = false;
+    bool within_classty_p_P = false;
 
   protected:
     /// The stream to print on.

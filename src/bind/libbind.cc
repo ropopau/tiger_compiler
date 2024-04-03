@@ -18,8 +18,7 @@ namespace bind
     bind::bind = true;
     Binder binder_compute;
     binder_compute(tree);
-   
   }
 
   bool bind = false;
-} // namespace escapes
+} // namespace bind

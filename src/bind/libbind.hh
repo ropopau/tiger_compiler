@@ -17,4 +17,4 @@ namespace bind
 
   extern bool bind;
 
-} // namespace escapes
+} // namespace bind

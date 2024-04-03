@@ -437,7 +437,7 @@ tychunk:
 tydec:
   "type" ID "=" ty { $$ = make_TypeDec(@$, $2, $4); }
   | "class" ID "extends" typeid "{" classfields "}" { $$ = make_TypeDec(@$, $2, make_ClassTy(@$, $4, $6)); } // OBJECT ------------------------------------
-  | "class" ID "{" classfields "}"  { $$ = make_TypeDec(@$, $2, make_ClassTy(@$, nullptr, $4)); } // OBJECT -----------------------------------------------
+  | "class" ID "{" classfields "}"  { $$ = make_TypeDec(@$, $2, make_ClassTy(@$, make_NameTy(@$, misc::symbol("Object")), $4)); } // OBJECT -----------------------------------------------
 ;
 
 
@@ -446,8 +446,7 @@ ty:
 | "{" tyfields "}"     { $$ = make_RecordTy(@$, $2); }
 | "array" "of" typeid  { $$ = make_ArrayTy(@$, $3); }
 | "class" "extends" typeid "{" classfields "}" { $$ = make_ClassTy(@$, $3, $5); } // OBJECT --------------------------------------------------
-| "class" "{" classfields "}" { $$ = make_ClassTy(@$, nullptr, $3); } // OBJECT --------------------------------------------------------------
-;
+| "class" "{" classfields "}" { $$ = make_ClassTy(@$, make_NameTy(@$, misc::symbol("Object")), $3); } // OBJECT --------------------------------------------------------------
 
 tyfields:
   %empty               { $$ = make_fields_type(); }
