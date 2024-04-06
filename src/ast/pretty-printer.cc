@@ -211,8 +211,8 @@ namespace ast
 
   void PrettyPrinter::operator()(const ArrayExp& e)
   {
-    //ostr_ << e.type_name_get() << "[" << e.size_get() << "] of "
-    //      << e.init_get();
+    ostr_ << e.type_name_get() << "[" << e.size_get() << "] of "
+          << e.init_get();
   }
 
   void PrettyPrinter::operator()(const FieldInit& e)
@@ -321,9 +321,9 @@ namespace ast
     auto a = &e.ty_get();
     auto c = const_cast<ast::Ty*>(a);
     auto ok = dynamic_cast<ast::ClassTy*>(c);
-    if (ok == nullptr)
-      ostr_ << " = {" << e.ty_get() << "}" << misc::iendl;
-    else
+    //if (ok == nullptr)
+    //  ostr_ << " = {" << e.ty_get() << "}" << misc::iendl;
+    //else
       ostr_ << " = " << e.ty_get() << misc::iendl;
   }
 
@@ -378,16 +378,14 @@ namespace ast
 
   void PrettyPrinter::operator()(const RecordTy& e)
   {
+    ostr_ << "{";
     ostr_ << misc::separate(e.fields_get(), ", ");
-    // FIXED: Some code was deleted here.
-    //for (auto& exp : e.fields_get())
-    //  exp->accept(*this);
+    ostr_ << "}";
   }
 
   void PrettyPrinter::operator()(const ArrayTy& e)
   {
-    ostr_ << "OK??2";
-    //e.base_type_get().accept(*this);
+    ostr_ << "array of " << e.base_type_get();
   }
 
   void PrettyPrinter::operator()(const Field& e)
