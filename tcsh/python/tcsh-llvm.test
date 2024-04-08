@@ -1,0 +1,8 @@
+#! /bin/sh
+
+set -e
+
+testsdir=$top_srcdir/tests
+run=$top_builddir/tcsh/run
+
+$run $srcdir/ti.py -b llvm $testsdir/good/fact.tig

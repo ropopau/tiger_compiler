@@ -57,6 +57,8 @@
                 libtool
                 perl
                 swig4
+                llvmPackages_14.llvm
+                pkgs.pkgsi686Linux.llvmPackages_14.clang
               ] ++ buildenvPkgs;
 
 

@@ -1,3 +1,9 @@
+2024-03-28  Mael Cravero  <mael.cravero@epita.fr>
+
+	Version 1.93.d for 2025-tc-4.0
+
+	* NEWS.txt, configure.ac, .last-cl-gen, ChangeLog: here.
+
 2024-03-21  Mael Cravero  <mael.cravero@epita.fr>
 
 	Version 1.93.c for 2025-tc-3.0
