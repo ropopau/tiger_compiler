@@ -225,6 +225,7 @@ namespace ast
   void PrettyPrinter::operator()(const ChunkList& e)
   {
     // FIXED: Some code was deleted here.
+
     for (auto& chunks : e.chunks_get())
       chunks->accept(*this);
   }
