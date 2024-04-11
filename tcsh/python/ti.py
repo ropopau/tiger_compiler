@@ -239,6 +239,36 @@ class TiExecutor:
             self.data.ast = tc.desugar.desugar(self.data.ast, True, True)
         return self.data.ast
 
+    @wrap_step(["llvmtranslate"], "desugar")
+    def llvm_file(self) -> str:
+        self.data.llvm = tc.llvmtranslate.translate(self.data.ast)
+
+        self._rm_llvm()
+        self.llvm_temp_dir = tempfile.mkdtemp()
+        # Dump assembly code output into a temporary file.
+        self.llvm_output = os.path.join(self.llvm_temp_dir, "llvm.ll")
+        with open(self.llvm_output, "w") as f:
+            f.write(str(self.data.llvm))
+        return self.llvm_output
+
+    def _rm_llvm(self) -> None:
+        self._rm_attribute_file("llvm_output")
+        self._rm_attribute_file("llvm_binary")
+        self._rm_attribute_dir("llvm_temp_dir")
+
+    @wrap_step([], "llvm_file")
+    def llvm_bin(self) -> str:
+        self._rm_attribute_file("llvm_binary")
+        self.llvm_binary = os.path.join(self.llvm_temp_dir, "bin")
+        os.system(f"clang -m32 {self.llvm_output} -o {self.llvm_binary}")
+        return self.llvm_binary
+
+    @wrap_step([], "llvm_bin", tc.BackendType.llvm)
+    def llvm(self) -> Optional[str]:
+        self._run_cmd(self.llvm_binary)
+        self._rm_llvm()
+        return self.data.result
+
     def frontend_run(self) -> None:
         """Run parse, bind and type depending of TC step"""
         self.parse()
@@ -253,6 +283,8 @@ class TiExecutor:
     def backend_exec(self) -> Optional[str]:
         """execute backends: llvm, hir, lir, mips and ia32"""
         self.frontend_run()
+        if self.backend == tc.BackendType.llvm:
+            return self.llvm()
         return None
 
     def backend_run(self) -> None:
@@ -284,6 +316,7 @@ if __name__ == "__main__":
         dest="backend",
         default=tc.BackendType.mips,
         help="use BACKEND as back-end.  Can be either "
+        f"`{tc.BackendType.llvm.value}' (LLVM), "
         f"`{tc.BackendType.mips.value}' (MIPS assembly language) "
         "[default: %default]",
     )

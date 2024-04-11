@@ -7,6 +7,7 @@ from typing import List, Literal
 
 
 class BackendType(Enum):
+    llvm: Literal["llvm"] = "llvm"
     mips: Literal["mips"] = "mips"
 
 
@@ -38,6 +39,7 @@ try_import(
         "combine",
         "astclone",
         "desugar",
+        "llvmtranslate",
     ],
 )
 

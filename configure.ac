@@ -12,7 +12,7 @@ AC_PREREQ([2.64])
 ## Package set up.  ##
 ## ---------------- ##
 
-AC_INIT([LRE Tiger Compiler], [1.93.d], [tiger@lrde.epita.fr], [tc],
+AC_INIT([LRE Tiger Compiler], [1.93.e], [tiger@lrde.epita.fr], [tc],
         [http://tiger.lrde.epita.fr])
 
 # Auxiliary files.
@@ -223,6 +223,18 @@ AM_CONDITIONAL([SUPPORTED_IA32],
                [echo "$host" | grep -q '^\(i.86\|x86_64\).*linux\|^\(i.86\|amd64\).*freebsd'])
 
 
+# Debian does not provide a llvm-config binary
+# FIXME: bump to version 15 once nixpkgs is updated.
+TC_PROG([llvm-config-14 llvm-config], [>=TC_CLANG_PREREQ], [LLVM_CONFIG], [Print LLVM compilation options])
+TC_PROG([clang clang-14],             [>=TC_CLANG_PREREQ], [CLANG],       [C language family frontend for LLVM])
+
+# Add a configure option to link LLVM statically
+AC_ARG_ENABLE([static-llvm],
+              [AS_HELP_STRING([--enable-static-llvm],
+              [enable the linking statically against the LLVM back-end @<:@no@:>@])])
+
+# Set STATIC_LLVM when linking statically
+AM_CONDITIONAL([STATIC_LLVM], [test x"$enable_static_llvm" = x"yes"])
 
 
 
