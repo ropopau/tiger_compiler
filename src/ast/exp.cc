@@ -10,6 +10,7 @@ namespace ast
 {
   Exp::Exp(const Location& location)
     : Ast(location)
+    , Typable()
   {}
 
 } // namespace ast

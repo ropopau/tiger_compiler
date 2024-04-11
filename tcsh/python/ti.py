@@ -215,12 +215,39 @@ class TiExecutor:
             tc.bind.rename(self.data.ast)
         return self.data.ast
 
+    @wrap_step(["type"], "rename")
+    def type(self) -> Optional[tc.ast.ChunkList]:
+        try:
+            if self.object_enabled and tc.has("object"):
+                tc.object.types_check(self.data.ast).exit_on_error()
+            else:
+                tc.type.types_check(self.data.ast).exit_on_error()
+        except Exception as e:
+            return self.throw_error(e)
+        return self.data.ast
+
+    @wrap_step([], "type")
+    def object_desugar(self) -> Optional[tc.ast.ChunkList]:
+        if self.object_enabled and tc.has("object"):
+            class_names = tc.object.rename(self.data.ast)
+            self.data.ast = tc.object.desugar(self.data.ast, class_names)
+        return self.data.ast
+
+    @wrap_step([], "object_desugar")
+    def desugar(self) -> Optional[tc.ast.ChunkList]:
+        if self.desugar_enabled and tc.has("desugar"):
+            self.data.ast = tc.desugar.desugar(self.data.ast, True, True)
+        return self.data.ast
+
     def frontend_run(self) -> None:
         """Run parse, bind and type depending of TC step"""
         self.parse()
 
         self.bind()
         self.rename()
+        self.type()
+        self.object_desugar()
+        self.desugar()
         return None
 
     def backend_exec(self) -> Optional[str]:

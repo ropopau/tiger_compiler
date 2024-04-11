@@ -25,4 +25,11 @@ namespace object::tasks
 
   // FIXME: Some code was deleted here.
 
+  /// Check for type violation, allowing objects.
+  TASK_DECLARE("object-types-compute",
+               "check for type violations, "
+               "allowing objects",
+               object_types_compute,
+               "object-bindings-compute");
+
 } // namespace object::tasks

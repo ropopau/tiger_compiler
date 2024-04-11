@@ -34,6 +34,10 @@ try_import(
         "ast",
         "bind",
         "escapes",
+        "type",
+        "combine",
+        "astclone",
+        "desugar",
     ],
 )
 

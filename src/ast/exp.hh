@@ -6,11 +6,14 @@
 #pragma once
 
 #include <ast/ast.hh>
+#include <ast/typable.hh>
 
 namespace ast
 {
   /// Exp.
-  class Exp : public Ast
+  class Exp
+    : public Ast
+    , public Typable
   {
   public:
     /** \name Ctor & dtor.
@@ -21,6 +24,14 @@ namespace ast
     Exp& operator=(const Exp&) = delete;
     /// Destroy an Exp node.
     /** \} */
+
+    /// \name Visitors entry point.
+    /// \{ */
+    /// Accept a const visitor \a v.
+    void accept(ConstVisitor& v) const override = 0;
+    /// Accept a non-const visitor \a v.
+    void accept(Visitor& v) override = 0;
+    /// \}
   };
 } // namespace ast
 #include <ast/exp.hxx>

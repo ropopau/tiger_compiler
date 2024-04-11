@@ -17,6 +17,17 @@ namespace object
 
   // FIXME: Some code was deleted here.
 
+  /*----------------.
+  | Compute types.  |
+  `----------------*/
+
+  /** \brief Check types allowing objects.
+
+      \param tree abstract syntax tree's root.
+
+      \return success of the type-checking.  */
+  misc::error types_check(ast::Ast& tree);
+
 } // namespace object
 
 #include <object/libobject.hxx>

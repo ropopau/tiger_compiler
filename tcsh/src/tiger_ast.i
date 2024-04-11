@@ -60,6 +60,14 @@
   %}
 }
 
+%extend ast::Typable
+{
+  %pythoncode %{
+    def type_get(self) -> "type::Type const *":
+        import tiger_type
+        return tiger_type._get_swig_real_type_type(_tiger_ast.Typable_type_get(self))
+    %}
+}
 
 // Visitors.
 %include "ast/visitor.hh"
@@ -207,6 +215,8 @@
 
 // Types.
 %include "ast/escapable.hh"
+%include "ast/typable.hh"
+%include "ast/type-constructor.hh"
 
 %include "ast/field.hh"
 %include "ast/field-init.hh"

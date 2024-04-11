@@ -14,6 +14,7 @@ namespace ast
                            NameTy* result,
                            Exp* body)
     : Dec(location, name)
+    , TypeConstructor()
     , formals_(formals)
     , result_(result)
     , body_(body)

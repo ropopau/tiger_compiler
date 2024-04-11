@@ -6,12 +6,15 @@
 #pragma once
 
 #include <ast/ast.hh>
+#include <ast/typable.hh>
 #include <misc/symbol.hh>
 
 namespace ast
 {
   /// Dec.
-  class Dec : public Ast
+  class Dec
+    : public Ast
+    , public Typable
   {
   public:
     /** \name Ctor & dtor.
@@ -22,6 +25,14 @@ namespace ast
     Dec& operator=(const Dec&) = delete;
     /// Destroy a Dec node.
     /** \} */
+
+    /// \name Visitors entry point.
+    /// \{ */
+    /// Accept a const visitor \a v.
+    void accept(ConstVisitor& v) const override = 0;
+    /// Accept a non-const visitor \a v.
+    void accept(Visitor& v) override = 0;
+    /// \}
 
     /** \name Accessors.
      ** \{ */

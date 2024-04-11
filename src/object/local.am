@@ -8,6 +8,7 @@ src_libtc_la_SOURCES +=                                                        \
 
 src_libtc_la_SOURCES += %D%/binder.hh %D%/binder.cc
 
+src_libtc_la_SOURCES += %D%/type-checker.hh %D%/type-checker.cc
 
 
 
@@ -18,6 +19,8 @@ check_PROGRAMS += %D%/test-parse
 check_PROGRAMS += %D%/test-bind
 %C%_test_bind_LDADD = src/libtc.la
 
+check_PROGRAMS += %D%/test-type
+%C%_test_type_LDADD = src/libtc.la
 
 
 
