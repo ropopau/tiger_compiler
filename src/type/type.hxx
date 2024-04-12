@@ -12,12 +12,13 @@ namespace type
   inline bool operator==(const Type& lhs, const Type& rhs)
   {
     // FIXME: Some code was deleted here.
-    die("REMOVE ME!");
+    return &rhs.actual() == &lhs.actual();
   }
 
   inline bool operator!=(const Type& lhs, const Type& rhs)
   {
     // FIXME: Some code was deleted here.
+    return &rhs.actual() != &lhs.actual();
   }
 
 } // namespace type

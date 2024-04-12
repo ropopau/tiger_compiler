@@ -9,6 +9,8 @@
 
 namespace type
 {
-  // FIXME: Some code was deleted here.
+  // FIXED: Some code was deleted here.
+  inline const Type& Array::type_get() const { return *type_; }
+  inline Type& Array::type_get() { return *type_; }
 
 } // namespace type

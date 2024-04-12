@@ -19,13 +19,19 @@ namespace type
 
   const Type* TypeChecker::type(ast::Typable& e)
   {
-    // FIXME: Some code was deleted here.
+    // FIXED: Some code was deleted here.
+    e.accept(*this);
+    return e.type_get();
   }
 
   const Record* TypeChecker::type(const ast::fields_type& e)
   {
     auto res = new Record;
-    // FIXME: Some code was deleted here.
+    // FIXED: Some code was deleted here.
+    for (const auto& field : e)
+    {
+      res->field_add(field->name_get(), *type(field->type_name_get()));
+    }
     return res;
   }
 

@@ -63,11 +63,13 @@ namespace type
   void PrettyPrinter::operator()(const Int&)
   {
     // FIXME: Some code was deleted here.
+    ostr_ << "int";
   }
 
   void PrettyPrinter::operator()(const String&)
   {
     // FIXME: Some code was deleted here.
+    ostr_ << "string";
   }
 
   void PrettyPrinter::operator()(const Named& e)
@@ -82,7 +84,10 @@ namespace type
 
   void PrettyPrinter::operator()(const Record& e)
   {
-    // FIXME: Some code was deleted here.
+    // FIXED: Some code was deleted here.
+    // ostr_ << "{";
+    // ostr_ << misc::separate(e.fields_get(), ", ");
+    // ostr_ << "}";
   }
 
   void PrettyPrinter::operator()(const Class& e)

@@ -8,5 +8,8 @@
 
 namespace ast
 {
-  // FIXME: Some code was deleted here.
+  // FIXED: Some code was deleted here.
+  Typable::Typable(const type::Type* t)
+    : type_(t)
+  {}
 } // namespace ast

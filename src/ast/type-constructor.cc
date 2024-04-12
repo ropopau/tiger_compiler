@@ -8,5 +8,12 @@
 
 namespace ast
 {
-  // FIXME: Some code was deleted here.
+  // FIXED: Some code was deleted here.
+  TypeConstructor::TypeConstructor()
+    : type_c_(nullptr)
+  {}
+  TypeConstructor::TypeConstructor(const type::Type* t)
+    : type_c_(t)
+  {}
+  
 } // namespace ast

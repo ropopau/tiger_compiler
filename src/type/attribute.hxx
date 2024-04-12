@@ -10,8 +10,10 @@ namespace type
 
   inline const Type& Attribute::type_get() const
   {
-    // FIXME: Some code was deleted here.
+    // FIXED: Some code was deleted here.
+    return dynamic_cast<const Type&>(*def_->type_name_get());
   }
+
 
   inline const ast::VarDec* Attribute::def_get() const { return def_; }
 
