@@ -35,6 +35,8 @@ AM_SILENT_RULES([yes])
 # Look for a C++ compiler.
 AC_LANG([C++])
 AC_PROG_CXX
+TC_PROG([clang32 clang clang-14], [>=TC_CLANG_PREREQ], [CLANG], [C language family frontend for LLVM])
+59/64
 
 # Warn if the C++ compiler is not known to support the required
 # features.  Or course, we should rather check for features, not

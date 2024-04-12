@@ -177,16 +177,18 @@ namespace ast
 
   void PrettyPrinter::operator()(const WhileExp& e)
   {
-    ostr_ << "while ";
+    ostr_ << "(while ";
     if (bindings_display(ostr_))
       ostr_ << " /* " << &e << " */";
 
     ostr_ << e.test_get() << " do " << misc::iendl << e.body_get();
+    ostr_ << ")";
   }
 
   void PrettyPrinter::operator()(const ForExp& e)
   {
-    ostr_ << "for ";
+
+    ostr_ << "(for ";
     if (bindings_display(ostr_))
       ostr_ << " /* " << &e << " */";
     ostr_ << e.vardec_get().name_get();
@@ -194,6 +196,7 @@ namespace ast
       ostr_ << " /* " << &e.vardec_get() << " */";
     ostr_ << " := " << *e.vardec_get().init_get() << " to " << e.hi_get()
           << " do " << misc::incendl << e.body_get();
+    ostr_ << ")";
   }
   void PrettyPrinter::operator()(const LetExp& e)
   {

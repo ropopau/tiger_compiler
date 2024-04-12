@@ -393,7 +393,7 @@ chunks:
 | tychunk chunks        { $$ = $2; $$->push_front($1);}
 | funchunk chunks         {$$ = $2; $$->push_front($1);}
 | varchunk chunks         { $$ = $2; $$->push_front($1); }
-| "import" STRING       {$$ = td.parse_import($1, $@);}
+| "import" STRING       {$$ = td.parse_import($2, @$);}
 /* A list of chunk metavariable */
 | CHUNKS "(" INT ")" chunks { $$ = metavar<ast::ChunkList>(td, $3); $$->splice_back(*$5);}
   // FIXME: Some code was deleted here (More rules).
