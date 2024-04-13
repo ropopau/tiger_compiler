@@ -43,6 +43,7 @@ namespace bind
   void Binder::operator()(ast::VarDec& e)
   {
     auto g = this->scoped_var_.get(e.name_get());
+    /*
     if (g != nullptr)
       {
         this->error_ << misc::error::error_type::bind;
@@ -50,6 +51,7 @@ namespace bind
                   << e.name_get() << "\" redefinition.\n";
         this->error_.exit();
       }
+    */
     this->scoped_var_.put(e.name_get(), &e);
     super_type::operator()(e);
   }
