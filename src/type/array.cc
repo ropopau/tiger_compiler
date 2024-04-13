@@ -9,7 +9,7 @@
 namespace type
 {
   // FIXED: Some code was deleted here.
-  Array::Array(Type* type) 
+  Array::Array(Type* type)
     : type_(type)
   {}
   void Array::accept(ConstVisitor& v) const { v(*this); }

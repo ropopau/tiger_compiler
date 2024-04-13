@@ -74,13 +74,10 @@ namespace ast
 
   void PrettyPrinter::operator()(const CallExp& e)
   {
-    if (e.args_get().size() != 0)
-      {
-        ostr_ << e.name_get();
-        if (bindings_display(ostr_))
-          ostr_ << " /* " << e.def_get() << " */";
-        ostr_ << "(" << misc::separate(e.args_get(), ", ") << ")";
-      }
+    ostr_ << e.name_get();
+    if (bindings_display(ostr_))
+      ostr_ << " /* " << e.def_get() << " */";
+    ostr_ << "(" << misc::separate(e.args_get(), ", ") << ")";
   }
 
   void PrettyPrinter::operator()(const IntExp& e) { ostr_ << e.value_get(); }
@@ -187,7 +184,6 @@ namespace ast
 
   void PrettyPrinter::operator()(const ForExp& e)
   {
-
     ostr_ << "(for ";
     if (bindings_display(ostr_))
       ostr_ << " /* " << &e << " */";
@@ -330,7 +326,7 @@ namespace ast
     //if (ok == nullptr)
     //  ostr_ << " = {" << e.ty_get() << "}" << misc::iendl;
     //else
-      ostr_ << " = " << e.ty_get() << misc::iendl;
+    ostr_ << " = " << e.ty_get() << misc::iendl;
   }
 
   // OBJECTS ------------------------------------------------------------------------------------

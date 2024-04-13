@@ -26,6 +26,9 @@ namespace type
   void Function::accept(Visitor& v) { v(*this); }
 
   // FIXED: Some code was deleted here.
-  bool Function::compatible_with(const Type& other) const { return *this == other; }
+  bool Function::compatible_with(const Type& other) const
+  {
+    return *this == other;
+  }
 
 } // namespace type

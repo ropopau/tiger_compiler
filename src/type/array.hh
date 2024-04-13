@@ -13,17 +13,17 @@ namespace type
   class Array : public Type
   {
     // FIXED: Some code was deleted here.
-    public:
+  public:
     virtual ~Array() = default;
     Array(Type* type);
 
     void accept(ConstVisitor& v) const override;
     void accept(Visitor& v) override;
-    
+
     const Type& type_get() const;
     Type& type_get();
 
-    private:
+  private:
     Type* type_;
   };
 

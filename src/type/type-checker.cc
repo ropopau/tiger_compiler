@@ -29,9 +29,9 @@ namespace type
     auto res = new Record;
     // FIXED: Some code was deleted here.
     for (const auto& field : e)
-    {
-      res->field_add(field->name_get(), *type(field->type_name_get()));
-    }
+      {
+        res->field_add(field->name_get(), *type(field->type_name_get()));
+      }
     return res;
   }
 

@@ -14,7 +14,6 @@ namespace type
     return dynamic_cast<const Type&>(*def_->type_name_get());
   }
 
-
   inline const ast::VarDec* Attribute::def_get() const { return def_; }
 
   inline void Attribute::def_set(const ast::VarDec* def) { def_ = def; }
