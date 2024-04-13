@@ -201,9 +201,15 @@
 %type <ast::NameTy*>          typeid
 %type <ast::Ty*>              ty
 
-%type <ast::Field*>           tyfield blic Type
-  {
-    // FIXED: Someardec
+%type <ast::Field*>           tyfield 
+%type <ast::fields_type*>     tyfields tyfields.1 
+
+
+// FIXME: Some code was deleted here (More %types).
+%type <ast::exps_type*>       exps exps.1 funcall funcall.1
+%type <ast::FunctionChunk*>   funchunk 
+%type <ast::Var*>             lvalue
+%type <ast::VarDec*>          vardec tyvardec
 %type <ast::VarChunk*>        varchunk tyvarchunks tyvarchunks.1
 
 %type <ast::FunctionDec*>     fundec
@@ -216,6 +222,8 @@
 %type <ast::MethodChunk*> methchunk
 %type <ast::MethodDec*> methdec
 // ------------------------------------------------------------------------------------------------------------------- END
+
+
 
 
 
