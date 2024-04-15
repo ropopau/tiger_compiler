@@ -15,5 +15,5 @@ namespace ast
   TypeConstructor::TypeConstructor(const type::Type* t)
     : type_c_(t)
   {}
-  
+
 } // namespace ast
