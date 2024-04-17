@@ -16,10 +16,13 @@ namespace object
   `-------*/
 
   // FIXME: Some code was deleted here.
+  void object_bind_compute(ast::Ast& tree);
 
   /*----------------.
   | Compute types.  |
   `----------------*/
+
+  void object_type_compute(ast::Ast& tree);
 
   /** \brief Check types allowing objects.
 

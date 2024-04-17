@@ -4,6 +4,7 @@
  */
 
 // FIXME: Some code was deleted here.
+#include <object/binder.hh>
 #include <object/libobject.hh>
 #include <object/type-checker.hh>
 
@@ -14,6 +15,15 @@ namespace object
   `-------*/
 
   // FIXME: Some code was deleted here.
+
+
+  void object_bind_compute(ast::Ast& tree)
+  {
+    object::Binder binder_compute;
+    binder_compute(tree);
+  }
+
+  void object_type_compute(ast::Ast& tree);
 
   /*----------------.
   | Compute types.  |

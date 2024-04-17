@@ -35,6 +35,7 @@ namespace bind
 
   void Binder::operator()(ast::Ast& e)
   {
+    
     begin();
     e.accept(*this);
     end();
