@@ -12,9 +12,15 @@
 
 namespace object::tasks
 {
-  void object_parse() {}
+  void object_parse() {
+  }
 
   // FIXME: Some code was deleted here.
+
+  void object_bind_compute()
+  {
+    object::object_bind_compute(*ast::tasks::the_program);
+  }
 
   void object_types_compute()
   {

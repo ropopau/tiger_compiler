@@ -94,6 +94,15 @@ namespace bind
     void begin();
     void end();
 
+    /// Check a set of definitions: unique names, browse headers, then bodies.
+    template <class D> void chunk_visit(ast::Chunk<D>& e);
+
+    /// Check a Function declaration header.
+    template <class D> void visit_dec_header(D& e);
+
+    /// Check a Function declaration body.
+    template <class D> void visit_dec_body(D& e);
+
     /// \}
 
   protected:

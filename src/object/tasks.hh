@@ -24,6 +24,10 @@ namespace object::tasks
                "object parse");
 
   // FIXME: Some code was deleted here.
+  TASK_DECLARE("object-bindings-compute",
+               "extends binding to object.",
+               object_bind_compute,
+               "object parse");
 
   /// Check for type violation, allowing objects.
   TASK_DECLARE("object-types-compute",

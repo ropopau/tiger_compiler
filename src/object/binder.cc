@@ -26,12 +26,14 @@ namespace object
   void Binder::operator()(ast::SimpleVar& e)
   {
     // FIXME: Some code was deleted here.
+    e.def_set(this->scoped_var_.get(e.name_get()));
   }
 
   // Handle the case of `Object'.
   void Binder::operator()(ast::NameTy& e)
   {
     // FIXME: Some code was deleted here.
+    e.def_set(this->scoped_type_.get(e.name_get()));
   }
 
   /*---------------.
@@ -62,6 +64,7 @@ namespace object
     within_method_dec_ = saved_within_method_dec;
     within_class_ty_ = saved_within_class_ty;
     // FIXME: Some code was deleted here (Scope ends).
+    e.super_get().def_set(this->scoped_type_.get(e.super_get().name_get()));
   }
 
   /*---------------.
@@ -83,6 +86,7 @@ namespace object
         super_type::operator()(e);
         if (e.name_get() == "self" && within_method_dec_)
           overrided_self_ = true;
+        
       }
   }
 
@@ -96,6 +100,17 @@ namespace object
     // Shorthand.
     using chunk_type = ast::Chunk<D>;
     // FIXME: Some code was deleted here (Two passes: once on headers, then on bodies).
+    auto& dec = e.decs_get();
+
+    for (auto i = dec.begin(); i != dec.end(); ++i)
+    {
+      visit_dec_header<D>(**i);
+    }
+
+    for (size_t i = 0; i != dec.size(); ++i)
+    {
+      visit_dec_body(*e.decs_get()[i]);
+    }
   }
 
   // This trampoline is needed, since `virtual' and `template' cannot
@@ -104,6 +119,8 @@ namespace object
   void Binder::visit_dec_header<ast::FunctionDec>(ast::FunctionDec& e)
   {
     // FIXME: Some code was deleted here (Call the super type).
+    super_type::visit_dec_header<ast::FunctionDec>(e);
+
   }
 
   // Compute the bindings of this function's body.
@@ -114,8 +131,11 @@ namespace object
     bool saved_within_method_dec = within_method_dec_;
     within_method_dec_ = false;
     // FIXME: Some code was deleted here (Call the super type).
+    super_type::visit_dec_body<ast::FunctionDec>(e);
     within_method_dec_ = saved_within_method_dec;
     within_class_ty_ = saved_within_class_ty;
+
+    
   }
 
   /* We can't bind methods definitions without types, so we don't
@@ -128,6 +148,7 @@ namespace object
   void Binder::operator()(ast::MethodDec& e)
   {
     // FIXME: Some code was deleted here (Scope begins).
+    begin();
     bool saved_within_class_ty = within_class_ty_;
     within_class_ty_ = false;
     bool saved_within_method_dec = within_method_dec_;
@@ -139,6 +160,7 @@ namespace object
     within_class_ty_ = saved_within_class_ty;
     overrided_self_ = saved_overrided_self;
     // FIXME: Some code was deleted here (Scope ends).
+    end();
   }
 
 } // namespace object

@@ -55,7 +55,6 @@ namespace ast
   {
     // FIXME: Some code was deleted here.
     e.object_get().accept(*this);
-    e.def_get()->accept(*this);
   }
 
   template <template <typename> class Const>

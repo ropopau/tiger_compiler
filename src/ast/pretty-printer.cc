@@ -344,8 +344,8 @@ namespace ast
   void PrettyPrinter::operator()(const MethodCallExp& e)
   {
     ostr_ << e.object_get() << "." << e.name_get();
-    if (ast::bindings_display(ostr_))
-      ostr_ << " /* " << e.def_get() << " */";
+    //if (ast::bindings_display(ostr_))
+    //  ostr_ << " /* " << e.def_get() << " */";
     if (e.args_get().size() > 0)
       ostr_ << "(" << misc::separate(e.args_get(), ", ") << ")";
     else
