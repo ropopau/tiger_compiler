@@ -94,8 +94,6 @@ namespace bind
     void begin();
     void end();
 
-
-
     /// Check a set of definitions: unique names, browse headers, then bodies.
     template <class D> void chunk_visit(ast::Chunk<D>& e);
 
