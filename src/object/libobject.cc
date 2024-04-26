@@ -10,30 +10,29 @@
 
 namespace object
 {
-  /*-------.
-  | Bind.  |
-  `-------*/
+    /*-------.
+    | Bind.  |
+    `-------*/
 
-  // FIXME: Some code was deleted here.
+    // FIXME: Some code was deleted here.
 
+    void object_bind_compute(ast::Ast& tree)
+    {
+        object::Binder binder_compute;
+        binder_compute(tree);
+    }
 
-  void object_bind_compute(ast::Ast& tree)
-  {
-    object::Binder binder_compute;
-    binder_compute(tree);
-  }
+    void object_type_compute(ast::Ast& tree);
 
-  void object_type_compute(ast::Ast& tree);
+    /*----------------.
+    | Compute types.  |
+    `----------------*/
 
-  /*----------------.
-  | Compute types.  |
-  `----------------*/
-
-  misc::error types_check(ast::Ast& tree)
-  {
-    TypeChecker type;
-    type(tree);
-    return type.error_get();
-  }
+    misc::error types_check(ast::Ast& tree)
+    {
+        TypeChecker type;
+        type(tree);
+        return type.error_get();
+    }
 
 } // namespace object

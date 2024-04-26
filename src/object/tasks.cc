@@ -12,20 +12,20 @@
 
 namespace object::tasks
 {
-  void object_parse() {
-  }
+    void object_parse()
+    {}
 
-  // FIXME: Some code was deleted here.
+    // FIXME: Some code was deleted here.
 
-  void object_bind_compute()
-  {
-    object::object_bind_compute(*ast::tasks::the_program);
-  }
+    void object_bind_compute()
+    {
+        object::object_bind_compute(*ast::tasks::the_program);
+    }
 
-  void object_types_compute()
-  {
-    task_error() << ::object::types_check(*ast::tasks::the_program)
-                 << &misc::error::exit_on_error;
-  }
+    void object_types_compute()
+    {
+        task_error() << ::object::types_check(*ast::tasks::the_program)
+                     << &misc::error::exit_on_error;
+    }
 
 } // namespace object::tasks
