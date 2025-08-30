@@ -15,6 +15,7 @@
 #include <misc/file-library.hh>
 #include <parse/parsetiger.hh>
 #include <parse/tweast.hh>
+#include <parse/location.hh>
 
 namespace parse
 {

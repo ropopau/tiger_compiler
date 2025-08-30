@@ -11,7 +11,7 @@
 #include <llvm/Config/llvm-config.h> // LLVM_VERSION_*
 #include <llvm/IR/IRPrintingPasses.h>
 #include <llvm/IR/Module.h>
-#include <llvm/IR/PassManager.h>
+//#include <llvm/IR/PassManager.h>
 #include <llvm/Linker/Linker.h>
 #include <llvm/Support/raw_ostream.h> // llvm::outs()
 
@@ -50,15 +50,18 @@ namespace llvmtranslate::tasks
         (void)link;
         postcondition(!link); // Returns true on error
       }
+    module.second->print(llvm::outs(), nullptr);
+    //auto& out = llvm::outs();
+    //llvm::PrintModulePass printer{out};
 
-    auto& out = llvm::outs();
-    llvm::PrintModulePass printer{out};
+/*
 #if LLVM_VERSION_MAJOR == 3 && LLVM_VERSION_MINOR <= 8
     printer.run(*module.second);
 #else
     llvm::ModuleAnalysisManager dummy_mam;
     printer.run(*module.second, dummy_mam);
 #endif
+*/
   }
 
 } // namespace llvmtranslate::tasks
