@@ -1,7 +1,21 @@
+/src/parse/location.hh
+/src/parse/parsetiger.cc
+/src/parse/parsetiger.hh
+/src/parse/parsetiger.html
+/src/parse/parsetiger.output
+/src/parse/parsetiger.stamp
+/src/parse/parsetiger.xml
+/src/parse/scantiger.cc
+/src/parse/scantiger.hh
+/tests/Makefile.in
+
+
+**.o
+**.lo
+**.dirstamp
 # ------------------------
 # Autotools / Build files
 # ------------------------
-/tests/Makefile
 /tests/Makefile
 /Makefile.in
 /Makefile.in

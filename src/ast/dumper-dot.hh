@@ -5,6 +5,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <ast/default-visitor.hh>
 #include <misc/concepts.hh>
 #include <misc/escape.hh>

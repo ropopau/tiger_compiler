@@ -4,6 +4,8 @@
  */
 #pragma once
 
+
+#include <cstdint>
 #include <ast/method-dec.hh>
 #include <type/function.hh>
 
