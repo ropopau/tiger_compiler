@@ -1,7 +1,9 @@
 # ------------------------
 # Autotools / Build files
 # ------------------------
-/Makefile
+/tests/Makefile
+/tests/Makefile
+/Makefile.in
 /Makefile.in
 /config.h
 /config.log
