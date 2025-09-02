@@ -11,10 +11,11 @@
 namespace object
 {
   /*-------.
-    | Bind.  |
-    `-------*/
+  | Bind.  |
+  `-------*/
 
   // FIXME: Some code was deleted here.
+
 
   void object_bind_compute(ast::Ast& tree)
   {
@@ -25,8 +26,8 @@ namespace object
   void object_type_compute(ast::Ast& tree);
 
   /*----------------.
-    | Compute types.  |
-    `----------------*/
+  | Compute types.  |
+  `----------------*/
 
   misc::error types_check(ast::Ast& tree)
   {

@@ -12,7 +12,8 @@
 
 namespace object::tasks
 {
-  void object_parse() {}
+  void object_parse() {
+  }
 
   // FIXME: Some code was deleted here.
 

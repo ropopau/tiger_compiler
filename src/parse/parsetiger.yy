@@ -50,7 +50,7 @@
 #include <misc/separator.hh>
 #include <misc/symbol.hh>
 #include <parse/fwd.hh>
-#include <parse/tiger-driver.hh>
+
   // Pre-declare parse::parse to allow a ``reentrant'' parsing within
   // the parser.
   namespace parse

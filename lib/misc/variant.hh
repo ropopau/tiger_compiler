@@ -14,7 +14,7 @@
 
 namespace misc
 {
-// Defining some concepts sepecific to variants:
+  // Defining some concepts sepecific to variants:
 
   // Type T can be converted into another type in Ts,
   // used to set the variant's value.
@@ -31,86 +31,79 @@ namespace misc
   template <typename V, typename... Ts>
   concept Visits = std::conjunction<std::is_invocable<V, Ts>...>::value;
 
-
-
-
-
-/// A wrapper over std::variant supporting conversion operators.
-///
-/// Constraints:
-/// - No type may be const-qualified.
-/// - Each type must be unique.
-/// - The first type must be default constructible.
-///
-/// Proper declaration form:
-///   misc::variant<T, T1, ..., Tn>
-
-template <typename T, typename... Ts>
-class variant : public std::variant<T, Ts...>
-{
-public:
-  /// The type of this variant.
-  using self_type = variant<T, Ts...>;
-  /// Super type.
-
-  using super_type = std::variant<T, Ts...>;
-
-  /// Constructors.
-  /// \{
-  variant() = default;
-
-  template <typename U>
-  variant(const U& rhs)
-  requires ContainsTypeSet<U, T, Ts...>; 
-  /// }\
+  /// A wrapper over std::variant supporting conversion operators.
   ///
-
-  template <typename U>
-  self_type& operator=(const U&)
-  requires ContainsTypeSet<U, T, Ts...>;
-
-  /// \brief Convert this variant to a value of type \a U.
+  /// Constraints:
+  /// - No type may be const-qualified.
+  /// - Each type must be unique.
+  /// - The first type must be default constructible.
   ///
-  /// This conversion relies on std::get.  In particular, if the
-  /// conversion fails, a std::bad_variant_access exception is thrown.
-  template <typename U>
-  operator U&()
-  requires ContainsTypeGet<U, T, Ts...>;
+  /// Proper declaration form:
+  ///   misc::variant<T, T1, ..., Tn>
 
-  /// Likewise, const version.
-  template <typename U>
-  operator const U&() const
-  requires ContainsTypeGet<U, T, Ts...>;
+  template <typename T, typename... Ts>
+  class variant : public std::variant<T, Ts...>
+  {
+  public:
+    /// The type of this variant.
+    using self_type = variant<T, Ts...>;
+    /// Super type.
 
-  /** \brief Visit variants of this class.
+    using super_type = std::variant<T, Ts...>;
+
+    /// Constructors.
+    /// \{
+    variant() = default;
+
+    template <typename U>
+    requires ContainsTypeSet<U, T, Ts...> variant(const U& rhs);
+    /// \}
+
+    template <typename U>
+    requires ContainsTypeSet<U, T, Ts...> self_type& operator=(const U&);
+
+    /// \brief Convert this variant to a value of type \a U.
+    ///
+    /// This conversion relies on std::get.  In particular, if the
+    /// conversion fails, a std::bad_variant_access exception is thrown.
+    template <typename U>
+    requires ContainsTypeGet<U, T, Ts...>
+    operator U&();
+
+    /// Likewise, const version.
+    template <typename U>
+    requires ContainsTypeGet<U, T, Ts...>
+    operator const U&() const;
+
+    /** \brief Visit variants of this class.
      ** std::visit does not handle classes inheriting from std::variant, hence
      ** these wrappers.
      ** \{ */
-  template <typename V>
-  auto visit(V&& visitor) const
-  requires Visits<V, T, Ts...>;
+    template <typename V>
+    requires Visits<V, T, Ts...>
+    auto visit(V&& visitor) const;
 
-  template <typename V, class... Variants>
-  static auto visit(V&& visitor, Variants&&... vars);
-  /** \} */
-};
+    template <typename V, class... Variants>
+    static auto visit(V&& visitor, Variants&&... vars);
+    /** \} */
+  };
 
-// Here add variadic template recursion on std::get
-template <typename T, typename... Ts>
-std::ostream& operator<<(std::ostream& os, const variant<T, Ts...>& obj);
+  // Here add variadic template recursion on std::get
+  template <typename T, typename... Ts>
+  std::ostream& operator<<(std::ostream& os, const variant<T, Ts...>& obj);
 
-class PrintVisitor
-{
-public:
-  PrintVisitor(std::ostream& os)
-  : os_(os)
-  {}
+  class PrintVisitor
+  {
+  public:
+    PrintVisitor(std::ostream& os)
+      : os_(os)
+    {}
 
-  template <typename T> std::ostream& operator()(const T& value) const;
+    template <typename T> std::ostream& operator()(const T& value) const;
 
-private:
-  std::ostream& os_;
-};
+  private:
+    std::ostream& os_;
+  };
 } // namespace misc
 
 #include <misc/variant.hxx>

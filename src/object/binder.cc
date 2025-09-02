@@ -9,19 +9,19 @@
 namespace object
 {
   /*---------.
-    | Visits.  |
-    `---------*/
+  | Visits.  |
+  `---------*/
 
   /* Handle the case of `self'. If the variable is not named `self', handle it
-       like the normal `Binder'.  If it is `self', it must be bound to a
-  definiton site, unless:
-       * it is inside a method,
-       * AND `self` is not overridden.
-       If those conditions are met, `self' is an implicitly defined instance of
-       the class.
-  ￼
-       Variable `self' will have a meaningful definition after the object
-       constructs have been desugared. */
+     like the normal `Binder'.  If it is `self', it must be bound to a definiton
+     site, unless:
+     * it is inside a method,
+     * AND `self` is not overridden.
+     If those conditions are met, `self' is an implicitly defined instance of
+     the class.
+￼
+     Variable `self' will have a meaningful definition after the object
+     constructs have been desugared. */
 
   void Binder::operator()(ast::SimpleVar& e)
   {
@@ -37,8 +37,8 @@ namespace object
   }
 
   /*---------------.
-    | Visiting Exp.  |
-    `---------------*/
+  | Visiting Exp.  |
+  `---------------*/
 
   void Binder::operator()(ast::ForExp& e)
   {
@@ -49,8 +49,8 @@ namespace object
   }
 
   /*-------------------.
-    | Visiting ClassTy.  |
-    `-------------------*/
+  | Visiting ClassTy.  |
+  `-------------------*/
 
   void Binder::operator()(ast::ClassTy& e)
   {
@@ -68,8 +68,8 @@ namespace object
   }
 
   /*---------------.
-    | Visiting Dec.  |
-    `---------------*/
+  | Visiting Dec.  |
+  `---------------*/
 
   void Binder::operator()(ast::VarDec& e)
   {
@@ -86,6 +86,7 @@ namespace object
         super_type::operator()(e);
         if (e.name_get() == "self" && within_method_dec_)
           overrided_self_ = true;
+        
       }
   }
 
@@ -98,19 +99,18 @@ namespace object
   {
     // Shorthand.
     using chunk_type = ast::Chunk<D>;
-    // FIXME: Some code was deleted here (Two passes: once on headers, then
-    // on bodies).
+    // FIXME: Some code was deleted here (Two passes: once on headers, then on bodies).
     auto& dec = e.decs_get();
 
     for (auto i = dec.begin(); i != dec.end(); ++i)
-      {
-        visit_dec_header<D>(**i);
-      }
+    {
+      visit_dec_header<D>(**i);
+    }
 
     for (size_t i = 0; i != dec.size(); ++i)
-      {
-        visit_dec_body(*e.decs_get()[i]);
-      }
+    {
+      visit_dec_body(*e.decs_get()[i]);
+    }
   }
 
   // This trampoline is needed, since `virtual' and `template' cannot
@@ -120,6 +120,7 @@ namespace object
   {
     // FIXME: Some code was deleted here (Call the super type).
     super_type::visit_dec_header<ast::FunctionDec>(e);
+
   }
 
   // Compute the bindings of this function's body.
@@ -133,15 +134,17 @@ namespace object
     super_type::visit_dec_body<ast::FunctionDec>(e);
     within_method_dec_ = saved_within_method_dec;
     within_class_ty_ = saved_within_class_ty;
+
+    
   }
 
   /* We can't bind methods definitions without types, so we don't
-       store them.  Nonetheless, object::Binder must still recurse
-       through the children of ast::MethodChunk to bind other names.
+     store them.  Nonetheless, object::Binder must still recurse
+     through the children of ast::MethodChunk to bind other names.
 
-       Note that as we defer the binding of methods to the
-       type-checkimg, there is no need to visit method in two-pass (like
-       bind::Binder does for functions for instance).  */
+     Note that as we defer the binding of methods to the
+     type-checkimg, there is no need to visit method in two-pass (like
+     bind::Binder does for functions for instance).  */
   void Binder::operator()(ast::MethodDec& e)
   {
     // FIXME: Some code was deleted here (Scope begins).

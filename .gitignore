@@ -1,51 +1,63 @@
-Makefile
-Makefile.in
+# ------------------------
+# Autotools / Build files
+# ------------------------
+/Makefile
+/Makefile.in
+/config.h
+/config.log
+/config.status
+/autom4te.cache/
+/aclocal.m4
+/install-sh
+/compile
+/missing
+/depend
+/libtool
+/*.lo
+/*.la
+/*.o
+/*.obj
+/*.so
+/*.a
+/*.dylib
 
-aclocal.m4
-autom4te.cache/
-build-aux/
-config.h
-config.h.in
-config.log
-config.status
-configure
-stamp-h1
+# ------------------------
+# Build directories
+# ------------------------
+/build/
+/bin/
+/lib/
+/*.dir/
+/*.exe
 
-*.o
-*.lo
-*.la
-*.libs/
-*.a
-*.so
-*.so.*
-*.dll
-*.exe
-
-.deps/
-.libs/
-*.dSYM/
-*.d
-
-libtool
-ltmain.sh
-TAGS
-ID
-*.tar.gz
-*.tar.bz2
-*.tar.xz
-
-*.rej
-*.orig
-*.bak
+# ------------------------
+# Temporary files
+# ------------------------
 *~
-core
+*.swp
+*.swo
+*.tmp
+*.bak
+*.orig
 
+# ------------------------
+# IDE/editor files
+# ------------------------
 .vscode/
-.history/
+.idea/
 *.code-workspace
+*.user
+*.project
+*.cproject
 
-.DS_Store
-.AppleDouble
-.LSOverride
-Icon?
-__MACOSX/
+# ------------------------
+# Coverage / profiling
+# ------------------------
+*.gcda
+*.gcno
+*.gcov
+
+# ------------------------
+# Logs
+# ------------------------
+*.log
