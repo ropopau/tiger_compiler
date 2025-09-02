@@ -20,7 +20,8 @@
 /*.so
 /*.a
 /*.dylib
-
+**.deps
+build-aux/bin
 # ------------------------
 # Build directories
 # ------------------------
@@ -56,6 +57,7 @@
 *.gcda
 *.gcno
 *.gcov
+stamp-h1
 
 # ------------------------
 # Logs
