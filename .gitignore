@@ -8,7 +8,17 @@
 /src/parse/scantiger.cc
 /src/parse/scantiger.hh
 /tests/Makefile.in
-
+/Makefile
+/authors.h
+/src/.libs/
+/src/libtc.la
+/src/parse/prelude.cc
+/src/tc
+/src/version.cc
+/src/version.stamp
+/tcsh/Makefile
+/tcsh/python/Makefile
+/tcsh/run
 
 **.o
 **.lo
