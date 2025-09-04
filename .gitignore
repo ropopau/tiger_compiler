@@ -1,3 +1,15 @@
+/src/ast/test-ast
+/src/ast/test-ast.trs
+/src/astclone/test-cloner
+/src/astclone/test-cloner.trs
+/src/bind/test-bind
+/src/bind/test-bind.trs
+/src/parse/test-parse
+/src/parse/test-parse.trs
+/src/parse/test-tweast
+/src/parse/test-tweast.trs
+
+
 /src/parse/location.hh
 /src/parse/parsetiger.cc
 /src/parse/parsetiger.hh
