@@ -11,14 +11,14 @@
 namespace type
 {
   // FIXME: Some code was deleted here (Other types : Int, String, Void).
-    class Int : public Type
+    class Int : public misc::Singleton, public Type
     {
     public:
         ~Int() = default;
         
         void accept(ConstVisitor& v) const;
         void accept(Visitor& v);
-        
+        const Type* instance();   
     
     };
 
