@@ -1,3 +1,6 @@
+/src/type/test-type
+/src/type/test-type.trs
+
 /src/ast/test-ast
 /src/ast/test-ast.trs
 /src/astclone/test-cloner
@@ -8,7 +11,10 @@
 /src/parse/test-parse.trs
 /src/parse/test-tweast
 /src/parse/test-tweast.trs
-
+/src/object/test-bind
+/src/object/test-bind.trs
+/src/object/test-parse
+/src/object/test-parse.trs
 
 /src/parse/location.hh
 /src/parse/parsetiger.cc

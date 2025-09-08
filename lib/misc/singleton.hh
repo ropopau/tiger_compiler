@@ -16,8 +16,8 @@ public:
     // Delete implicite methods (Copy, Move, move assign, copy assign)
     Singleton(const Singleton&) = delete;
     Singleton(Singleton&&) = delete;
-    Singleton operator=(Singleton&) = delete;
-    Singleton operator=(const Singleton&) = delete;
+    Singleton& operator=(const Singleton&) = delete;
+    Singleton& operator=(Singleton&) = delete;
     
     // Meyer pattern instance getter
     static const T& instance() {
@@ -33,9 +33,6 @@ protected:
     // Dtor
     ~Singleton() = default;
 
-
-private:
-    Singleton instance = nullptr;
 };
 
 } // namespace misc

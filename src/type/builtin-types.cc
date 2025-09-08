@@ -19,10 +19,7 @@ namespace type
         v(*this); 
     }
  
-    const Type* Int::instance() {
 
-
-    }   
 
     void String::accept(ConstVisitor& v) const {
         v(*this); 
